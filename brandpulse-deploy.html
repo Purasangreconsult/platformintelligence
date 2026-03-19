@@ -1,0 +1,2027 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BrandPulse — TLG Intelligence</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500&family=Instrument+Sans:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#060709;--s1:#0c0e13;--s2:#111318;--s3:#171a21;--s4:#1d2028;--s5:#242830;
+  --b1:rgba(255,255,255,0.05);--b2:rgba(255,255,255,0.08);--b3:rgba(255,255,255,0.13);
+  --t1:#f0f2f5;--t2:#8c91a0;--t3:#484d5c;
+  --gold:#c8a45a;--gd:rgba(200,164,90,0.1);--gm:rgba(200,164,90,0.2);
+  --acid:#00e09a;--ad:rgba(0,224,154,0.08);--am:rgba(0,224,154,0.18);
+  --amb:#f0a420;--amd:rgba(240,164,32,0.08);
+  --red:#f04040;--rd:rgba(240,64,64,0.08);
+  --blue:#4080f0;--bd:rgba(64,128,240,0.08);
+  --pur:#9060f0;--pud:rgba(144,96,240,0.08);
+  --wine:#9b2042;--wnd:rgba(155,32,66,0.08);
+  --r:8px;--rs:5px;--rl:12px;
+}
+body{font-family:'Instrument Sans',sans-serif;background:var(--bg);color:var(--t1);font-size:13px;line-height:1.5;overflow:hidden;height:100vh}
+::-webkit-scrollbar{width:3px;height:3px}::-webkit-scrollbar-thumb{background:var(--b3);border-radius:2px}
+a{color:inherit;text-decoration:none}
+
+/* ===== LOGIN ===== */
+#ls{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;background:var(--bg)}
+.ls-bg{position:absolute;inset:0;background:radial-gradient(ellipse 60% 50% at 50% -5%,rgba(200,164,90,0.07) 0%,transparent 70%)}
+.lb{width:360px;position:relative;z-index:2}
+.ll{display:flex;align-items:center;gap:12px;justify-content:center;margin-bottom:32px}
+.li{width:40px;height:40px;background:var(--gold);border-radius:9px;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:12px;font-weight:800;color:#060709}
+.lt{font-family:'Syne',sans-serif;font-size:18px;font-weight:700}
+.ls2{font-size:10px;color:var(--t3);letter-spacing:0.1em;text-transform:uppercase;font-family:'JetBrains Mono',monospace}
+.lf{background:var(--s2);border:1px solid var(--b2);border-radius:var(--rl);padding:22px}
+.lfl{display:block;font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:0.1em;font-family:'JetBrains Mono',monospace;margin-bottom:5px}
+.lfi{width:100%;padding:8px 11px;background:var(--s3);border:1px solid var(--b2);border-radius:var(--rs);color:var(--t1);font-size:13px;font-family:'Instrument Sans',sans-serif;outline:none;transition:border-color 0.12s;margin-bottom:11px}
+.lfi:focus{border-color:var(--gold)}
+.lfb{width:100%;padding:10px;background:var(--gold);border:none;border-radius:var(--rs);color:#060709;font-size:13px;font-weight:700;font-family:'Syne',sans-serif;cursor:pointer;letter-spacing:0.03em;transition:opacity 0.12s;margin-top:4px}
+.lfb:hover{opacity:0.88}
+.lug{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:16px}
+.lu{display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--s2);border:1px solid var(--b1);border-radius:var(--rs);cursor:pointer;transition:all 0.12s}
+.lu:hover{border-color:var(--b3);background:var(--s3)}
+.lav{width:24px;height:24px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;font-family:'JetBrains Mono',monospace}
+.le{font-size:10px;color:var(--red);text-align:center;margin-top:7px;display:none;font-family:'JetBrains Mono',monospace}
+
+/* ===== APP ===== */
+#app{display:none;height:100vh;flex-direction:column}
+#app.on{display:flex}
+
+/* HEADER */
+.hdr{height:48px;background:var(--s1);border-bottom:1px solid var(--b1);display:flex;align-items:center;padding:0 16px;gap:12px;flex-shrink:0}
+.hlogo{width:28px;height:28px;background:var(--gold);border-radius:6px;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:9px;font-weight:800;color:#060709;flex-shrink:0}
+.htitle{font-family:'Syne',sans-serif;font-size:12px;font-weight:600;color:var(--t3)}
+.hsep{width:1px;height:18px;background:var(--b2);flex-shrink:0}
+.hbrand{font-family:'Syne',sans-serif;font-size:16px;font-weight:700}
+.hpp{font-size:9px;padding:2px 8px;border-radius:20px;font-family:'JetBrains Mono',monospace}
+.hpp.g{background:var(--am);color:var(--acid)}.hpp.a{background:rgba(240,164,32,0.18);color:var(--amb)}.hpp.r{background:rgba(240,64,64,0.18);color:var(--red)}
+.hmeta{font-size:10px;color:var(--t3);font-family:'JetBrains Mono',monospace;display:flex;align-items:center;gap:4px}
+.ld{display:inline-block;width:5px;height:5px;background:var(--acid);border-radius:50%;animation:bl 2s infinite}
+@keyframes bl{0%,100%{opacity:1}50%{opacity:0.3}}
+.hsp{flex:1}
+.rng{display:flex;background:var(--s3);border:1px solid var(--b2);border-radius:var(--rs);overflow:hidden}
+.rb{padding:4px 9px;font-size:10px;cursor:pointer;color:var(--t3);background:none;border:none;font-family:'Instrument Sans',sans-serif;transition:all 0.1s}
+.rb.on{background:var(--gold);color:#060709;font-weight:700}
+.rb:hover:not(.on){background:var(--s4);color:var(--t2)}
+.hbtn{display:flex;align-items:center;gap:5px;padding:5px 10px;border-radius:var(--rs);border:1px solid var(--b2);background:transparent;color:var(--t2);font-size:10px;cursor:pointer;font-family:'Instrument Sans',sans-serif;transition:all 0.12s;white-space:nowrap}
+.hbtn:hover{border-color:var(--gold);color:var(--gold)}
+.hbtn.pk{background:var(--gold);border-color:var(--gold);color:#060709;font-weight:700}
+.hbtn.pk:hover{opacity:0.88}
+.huser{display:flex;align-items:center;gap:7px;padding:4px 8px;border-radius:var(--rs);cursor:pointer;transition:background 0.12s}
+.huser:hover{background:var(--s3)}
+.huav{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;font-family:'JetBrains Mono',monospace}
+.hunm{font-size:11px;font-weight:500}
+.hurole{font-size:9px;color:var(--t3);font-family:'JetBrains Mono',monospace}
+/* client-view toggle */
+.cv-toggle{display:flex;align-items:center;gap:6px;padding:4px 10px;border-radius:var(--rs);border:1px solid var(--b2);cursor:pointer;font-size:10px;color:var(--t2);transition:all 0.12s;font-family:'JetBrains Mono',monospace}
+.cv-toggle.on{background:var(--am);border-color:rgba(0,224,154,0.3);color:var(--acid)}
+.cv-dot{width:6px;height:6px;border-radius:50%;background:var(--t3)}
+.cv-toggle.on .cv-dot{background:var(--acid)}
+
+/* BODY */
+.abody{flex:1;display:flex;overflow:hidden}
+
+/* SIDEBAR */
+.sb{width:200px;background:var(--s1);border-right:1px solid var(--b1);display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto;padding:8px 6px}
+.sbl{font-size:9px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--t3);padding:0 6px;margin:10px 0 4px;font-family:'JetBrains Mono',monospace}
+.bi{display:flex;align-items:center;gap:7px;padding:6px 8px;border-radius:var(--rs);cursor:pointer;transition:background 0.1s;border:1px solid transparent;margin-bottom:1px;position:relative}
+.bi:hover{background:var(--s3)}
+.bi.active{background:var(--gd);border-color:rgba(200,164,90,0.2)}
+.bi.hidden-brand{opacity:0.3}
+.bi-av{width:24px;height:24px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;font-family:'JetBrains Mono',monospace;flex-shrink:0}
+.bi-inf{flex:1;min-width:0}
+.bi-nm{font-size:12px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bi-ct{font-size:10px;color:var(--t3)}
+.bi-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0}
+.bi-eye{font-size:11px;cursor:pointer;color:var(--t3);padding:2px;border-radius:3px;transition:all 0.12s;flex-shrink:0}
+.bi-eye:hover{color:var(--t1);background:var(--s5)}
+.addbtn{display:flex;align-items:center;gap:6px;padding:6px 8px;border-radius:var(--rs);cursor:pointer;color:var(--t3);font-size:11px;border:1px dashed var(--b3);margin:3px 0;transition:all 0.12s}
+.addbtn:hover{color:var(--gold);border-color:rgba(200,164,90,0.4);background:var(--gd)}
+.sbft{margin-top:auto;padding-top:10px;border-top:1px solid var(--b1)}
+.snl{display:flex;align-items:center;gap:7px;padding:5px 8px;border-radius:var(--rs);cursor:pointer;color:var(--t3);font-size:10px;transition:all 0.12s;font-family:'JetBrains Mono',monospace}
+.snl:hover{background:var(--s3);color:var(--t2)}
+
+/* MAIN */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.tabs{background:var(--s1);border-bottom:1px solid var(--b1);display:flex;padding:0 16px;flex-shrink:0;overflow-x:auto}
+.tab{padding:9px 12px;font-size:11px;color:var(--t3);cursor:pointer;border-bottom:2px solid transparent;transition:all 0.12s;font-weight:500;margin-bottom:-1px;white-space:nowrap}
+.tab.on{color:var(--gold);border-bottom-color:var(--gold)}
+.tab:hover:not(.on){color:var(--t2)}
+.ca{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:13px}
+.tp{display:none}.tp.on{display:flex;flex-direction:column;gap:13px}
+
+/* GRIDS */
+.g6{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
+.g5{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:11px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.g31{display:grid;grid-template-columns:1fr 1fr 320px;gap:11px}
+.g21{display:grid;grid-template-columns:1fr 300px;gap:11px}
+
+/* KPI CARD */
+.kpi{background:var(--s2);border:1px solid var(--b1);border-radius:var(--r);padding:11px 12px;position:relative;overflow:hidden;transition:border-color 0.1s}
+.kpi:hover{border-color:var(--b2)}
+.kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:1.5px}
+.kpi.g::before{background:var(--acid)}.kpi.a::before{background:var(--amb)}.kpi.r::before{background:var(--red)}.kpi.n::before{background:var(--b3)}
+.kl{font-size:9px;color:var(--t3);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:5px;font-family:'JetBrains Mono',monospace}
+.kv{font-size:19px;font-family:'JetBrains Mono',monospace;letter-spacing:-0.02em;color:var(--t1);font-weight:300}
+.kd{font-size:9px;margin-top:3px;font-family:'JetBrains Mono',monospace}
+.dp{color:var(--acid)}.dn{color:var(--red)}.dw{color:var(--amb)}
+
+/* CARD */
+.card{background:var(--s2);border:1px solid var(--b1);border-radius:var(--r);overflow:hidden;transition:border-color 0.1s}
+.card:hover{border-color:var(--b2)}
+.ch{display:flex;align-items:center;justify-content:space-between;padding:10px 13px 9px;border-bottom:1px solid var(--b1)}
+.ct{font-size:11px;font-weight:500;color:var(--t1);display:flex;align-items:center;gap:6px}
+.ci{width:16px;height:16px;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:9px}
+.ca2{font-size:10px;color:var(--t3);cursor:pointer;transition:color 0.12s;font-family:'JetBrains Mono',monospace}
+.ca2:hover{color:var(--gold)}
+.cb{padding:11px 13px}
+.stag{font-size:8px;padding:1px 5px;border-radius:2px;background:var(--bd);color:var(--blue);font-family:'JetBrains Mono',monospace;letter-spacing:0.05em;text-transform:uppercase}
+
+/* SENTIMENT */
+.sr{position:relative;width:100px;height:100px;margin:0 auto 10px}
+.sc2{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center}
+.sp2{font-size:20px;font-family:'JetBrains Mono',monospace;font-weight:300}
+.sw2{font-size:8px;color:var(--t3);letter-spacing:0.08em;text-transform:uppercase}
+.srow{display:flex;align-items:center;gap:7px;margin-bottom:5px}
+.snl2{font-size:10px;color:var(--t2);width:58px}
+.sbw{flex:1;height:3px;background:var(--s4);border-radius:2px;overflow:hidden}
+.sbf{height:100%;border-radius:2px}
+.sv{font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--t2);width:24px;text-align:right}
+
+/* CHANNEL ROW */
+.chr{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--b1)}
+.chr:last-child{border-bottom:none}
+.chi{width:26px;height:26px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0}
+.chn{font-size:11px;font-weight:500}
+.chs{font-size:10px;color:var(--t3);font-family:'JetBrains Mono',monospace}
+.chmv{font-size:12px;font-family:'JetBrains Mono',monospace;font-weight:300}
+.chmd{font-size:9px;font-family:'JetBrains Mono',monospace}
+.ch-src{font-size:9px;color:var(--t3);font-family:'JetBrains Mono',monospace}
+
+/* ARTICLE */
+.art{display:flex;gap:8px;padding:8px 0;border-bottom:1px solid var(--b1)}
+.art:last-child{border-bottom:none}
+.adot{width:5px;height:5px;border-radius:50%;flex-shrink:0;margin-top:5px}
+.attl{font-size:11px;font-weight:500;line-height:1.4;margin-bottom:3px}
+.amet{font-size:10px;color:var(--t3);display:flex;gap:5px;align-items:center;flex-wrap:wrap}
+.asp{padding:1px 4px;border-radius:2px;font-size:8px;font-weight:600;font-family:'JetBrains Mono',monospace}
+.asrc{font-size:9px;color:var(--blue);cursor:pointer;font-family:'JetBrains Mono',monospace;text-decoration:underline}
+.asrc:hover{color:var(--gold)}
+.adate{font-size:9px;color:var(--t3);font-family:'JetBrains Mono',monospace}
+
+/* TREND ITEM */
+.tri{display:flex;align-items:center;gap:7px;padding:7px 0;border-bottom:1px solid var(--b1)}
+.tri:last-child{border-bottom:none}
+.trn2{font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--t3);width:15px;flex-shrink:0}
+.trq{flex:1;font-size:11px}
+.trb{width:45px;height:2px;background:var(--s4);border-radius:1px;overflow:hidden}
+.trbf{height:100%;background:var(--blue);border-radius:1px}
+.trv{font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--blue);width:20px;text-align:right}
+.trsrc{font-size:9px;color:var(--t3);font-family:'JetBrains Mono',monospace}
+
+/* INSIGHTS */
+.ins{display:flex;gap:8px;padding:9px 11px;border-radius:var(--rs);margin-bottom:5px}
+.ins:last-child{margin-bottom:0}
+.ins.g{background:var(--ad);border-left:2px solid var(--acid)}.ins.a{background:var(--amd);border-left:2px solid var(--amb)}.ins.r{background:var(--rd);border-left:2px solid var(--red)}.ins.b{background:var(--bd);border-left:2px solid var(--blue)}
+.idot{width:5px;height:5px;border-radius:50%;flex-shrink:0;margin-top:5px}
+.itxt{font-size:11px;color:var(--t2);line-height:1.6}.itxt strong{color:var(--t1);font-weight:500}
+
+/* BENCHMARK */
+.bg2{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:10px}
+.bb{padding:8px 10px;border-radius:var(--rs);border:1px solid var(--b1);text-align:center;cursor:pointer;transition:all 0.12s}
+.bb.you{border-color:var(--gold)}
+.bbn{font-size:10px;font-weight:500;color:var(--t2);margin-bottom:2px}
+.bb.you .bbn{color:var(--gold)}
+.bbs{font-size:17px;font-family:'JetBrains Mono',monospace;font-weight:300}
+.bbl{font-size:8px;color:var(--t3);letter-spacing:0.05em;text-transform:uppercase}
+.sov{display:flex;height:18px;border-radius:3px;overflow:hidden;gap:2px}
+.sovs{display:flex;align-items:center;justify-content:center;font-size:9px;font-family:'JetBrains Mono',monospace}
+
+/* TAGS */
+.tags2{display:flex;flex-wrap:wrap;gap:4px}
+.tag2{font-size:10px;padding:2px 6px;border-radius:3px;font-family:'JetBrains Mono',monospace}
+
+/* TRAFFIC */
+.tfr{display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--b1)}
+.tfr:last-child{border-bottom:none}
+.tfn{font-size:11px;color:var(--t2)}
+.tfv{font-size:11px;font-family:'JetBrains Mono',monospace}
+.tfsrc{font-size:9px;color:var(--t3);font-family:'JetBrains Mono',monospace}
+
+/* SOCIAL LISTENING */
+.conv{display:flex;gap:8px;padding:9px 0;border-bottom:1px solid var(--b1)}
+.conv:last-child{border-bottom:none}
+.conv-ico{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0;margin-top:2px}
+.conv-b{flex:1;min-width:0}
+.conv-txt{font-size:11px;line-height:1.5;margin-bottom:4px}
+.conv-meta{font-size:9px;color:var(--t3);font-family:'JetBrains Mono',monospace;display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.conv-sp{padding:1px 4px;border-radius:2px;font-size:8px;font-weight:700;font-family:'JetBrains Mono',monospace}
+.conv-link{color:var(--blue);text-decoration:underline;cursor:pointer;font-size:9px}
+.conv-link:hover{color:var(--gold)}
+.conv-date{font-size:9px;color:var(--t3);font-family:'JetBrains Mono',monospace}
+
+/* ===== AI SEARCH TAB ===== */
+.ai-engine-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:0}
+.ae-card{border-radius:var(--r);padding:14px;border:1px solid var(--b1);position:relative;overflow:hidden;transition:all 0.15s;cursor:pointer}
+.ae-card:hover{border-color:var(--b3)}
+.ae-logo{font-size:20px;margin-bottom:8px}
+.ae-nm{font-family:'Syne',sans-serif;font-size:12px;font-weight:600;margin-bottom:4px}
+.ae-score{font-size:28px;font-family:'JetBrains Mono',monospace;font-weight:300;margin-bottom:2px}
+.ae-lbl{font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:0.08em;font-family:'JetBrains Mono',monospace}
+.ae-bar{height:2px;background:var(--s4);border-radius:1px;margin-top:8px;overflow:hidden}
+.ae-bar-fill{height:100%;border-radius:1px}
+.ae-status{position:absolute;top:8px;right:8px;font-size:8px;padding:1px 5px;border-radius:2px;font-family:'JetBrains Mono',monospace}
+.ai-query-item{display:flex;align-items:flex-start;gap:9px;padding:9px 0;border-bottom:1px solid var(--b1)}
+.ai-query-item:last-child{border-bottom:none}
+.aqi-platform{width:20px;height:20px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:9px;flex-shrink:0;margin-top:1px}
+.aqi-q{flex:1}
+.aqi-qtext{font-size:11px;font-weight:500;margin-bottom:2px}
+.aqi-response{font-size:10px;color:var(--t2);line-height:1.5;font-style:italic}
+.aqi-meta{font-size:9px;color:var(--t3);font-family:'JetBrains Mono',monospace;margin-top:3px;display:flex;gap:6px;align-items:center}
+.aqi-vol{font-size:11px;font-family:'JetBrains Mono',monospace}
+.social-ai-item{display:flex;align-items:center;gap:9px;padding:7px 0;border-bottom:1px solid var(--b1)}
+.social-ai-item:last-child{border-bottom:none}
+.sai-platform{font-size:14px;width:22px;text-align:center;flex-shrink:0}
+.sai-q{flex:1;font-size:11px}
+.sai-vol{font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--pur)}
+.sai-trend{font-size:9px;font-family:'JetBrains Mono',monospace}
+.ai-overview-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 8px;border-radius:20px;font-size:10px;font-family:'JetBrains Mono',monospace}
+.ai-presence-meter{background:var(--s3);border-radius:var(--r);padding:12px 14px;margin-bottom:8px}
+.apm-label{font-size:10px;color:var(--t2);margin-bottom:6px}
+.apm-bar{height:4px;background:var(--s5);border-radius:2px;overflow:hidden;margin-bottom:4px}
+.apm-fill{height:100%;border-radius:2px}
+.apm-vals{display:flex;justify-content:space-between;font-size:9px;font-family:'JetBrains Mono',monospace;color:var(--t3)}
+
+/* ===== AD INTEL ===== */
+.srchbar{background:var(--s2);border:1px solid var(--b2);border-radius:var(--r);padding:10px 13px;display:flex;align-items:center;gap:9px}
+.srchbar input{flex:1;background:transparent;border:none;outline:none;font-size:14px;font-family:'Syne',sans-serif;font-weight:500;color:var(--t1)}
+.srchbar input::placeholder{color:var(--t3)}
+.sf2{padding:4px 9px;border-radius:20px;font-size:10px;cursor:pointer;border:1px solid var(--b2);color:var(--t2);transition:all 0.12s;background:transparent;font-family:'JetBrains Mono',monospace}
+.sf2.hl{border-color:var(--gold);color:var(--gold);background:var(--gd)}
+.sf2.hl:hover{background:var(--gm)}
+.adg{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.adc{background:var(--s2);border:1px solid var(--b1);border-radius:var(--r);overflow:hidden;transition:all 0.15s;cursor:pointer}
+.adc:hover{border-color:var(--b3);transform:translateY(-2px)}
+.ad-cre{height:190px;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.ad-type{position:absolute;top:7px;left:7px;font-size:8px;padding:2px 5px;border-radius:2px;font-family:'JetBrains Mono',monospace;background:rgba(0,0,0,0.65);color:var(--t1)}
+.ad-act{position:absolute;top:7px;right:7px;font-size:8px;padding:2px 6px;border-radius:2px;font-family:'JetBrains Mono',monospace;background:rgba(0,224,154,0.2);color:var(--acid)}
+.ad-mock{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;padding:12px;text-align:center;width:100%}
+.ad-chip2{width:30px;height:30px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;font-family:'JetBrains Mono',monospace;margin-bottom:2px}
+.ad-hl{font-size:12px;font-weight:700;font-family:'Syne',sans-serif;line-height:1.3}
+.ad-bd2{font-size:10px;color:var(--t2);line-height:1.4}
+.ad-cta2{margin-top:5px;padding:4px 12px;border-radius:4px;font-size:9px;font-weight:700;font-family:'JetBrains Mono',monospace}
+.ad-info2{padding:10px 12px}
+.ad-brow{display:flex;align-items:center;gap:7px;margin-bottom:7px}
+.ad-blogo{width:20px;height:20px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;font-family:'JetBrains Mono',monospace;flex-shrink:0}
+.ad-bn{font-size:11px;font-weight:500}
+.ad-plat{font-size:9px;color:var(--t3)}
+.ad-copy2{font-size:10px;color:var(--t2);line-height:1.5;margin-bottom:7px}
+.ad-stats2{display:flex;gap:10px;margin-bottom:6px}
+.ad-sv{font-size:10px;font-family:'JetBrains Mono',monospace}
+.ad-sl{font-size:8px;color:var(--t3);text-transform:uppercase;letter-spacing:0.05em}
+.ad-ft2{padding:7px 12px;border-top:1px solid var(--b1);display:flex;justify-content:space-between;align-items:center}
+.ad-dt{font-size:9px;color:var(--t3);font-family:'JetBrains Mono',monospace}
+.mtag{font-size:8px;padding:1px 5px;border-radius:2px;background:var(--gd);color:var(--gold);font-family:'JetBrains Mono',monospace}
+.adlink{font-size:9px;color:var(--blue);font-family:'JetBrains Mono',monospace;cursor:pointer}
+.adlink:hover{color:var(--gold)}
+
+/* MODAL */
+.mov{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:500;align-items:center;justify-content:center}
+.mov.open{display:flex}
+.modal{background:var(--s2);border:1px solid var(--b2);border-radius:var(--rl);padding:22px;width:400px;max-width:90vw}
+.mttl{font-family:'Syne',sans-serif;font-size:14px;font-weight:600;margin-bottom:16px}
+.fg{margin-bottom:10px}
+.fl{display:block;font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:4px;font-family:'JetBrains Mono',monospace}
+.fi2{width:100%;padding:7px 10px;background:var(--s3);border:1px solid var(--b2);border-radius:var(--rs);color:var(--t1);font-size:12px;font-family:'Instrument Sans',sans-serif;outline:none;transition:border-color 0.12s}
+.fi2:focus{border-color:var(--gold)}
+.fr2{display:flex;gap:8px}
+.macts{display:flex;gap:8px;justify-content:flex-end;margin-top:16px}
+.bp{padding:7px 16px;background:var(--gold);color:#060709;border:none;border-radius:var(--rs);font-size:11px;font-weight:700;cursor:pointer;font-family:'Instrument Sans',sans-serif}
+.bp:hover{opacity:0.85}
+.bg3{padding:7px 12px;background:transparent;color:var(--t2);border:1px solid var(--b2);border-radius:var(--rs);font-size:11px;cursor:pointer;font-family:'Instrument Sans',sans-serif;transition:all 0.12s}
+.bg3:hover{color:var(--t1);border-color:var(--b3)}
+
+/* AI ANALYSIS */
+.ai-box2{background:var(--s2);border:1px solid rgba(200,164,90,0.14);border-radius:var(--r);padding:14px;position:relative;overflow:hidden}
+.ai-box2::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);opacity:0.3}
+.airsp{font-size:12px;line-height:1.8;color:var(--t2)}.airsp strong{color:var(--t1);font-weight:500}.airsp .hi{color:var(--acid)}.airsp .wa{color:var(--amb)}.airsp .da{color:var(--red)}
+.oscore{display:flex;align-items:center;gap:14px;padding:12px 14px;background:var(--s3);border-radius:var(--rs);margin-bottom:8px}
+.oscv{font-size:30px;font-family:'JetBrains Mono',monospace;font-weight:300}
+.osci{flex:1}.oscl{font-size:11px;font-weight:500;margin-bottom:1px}.oscs{font-size:10px;color:var(--t3)}
+.scbar{margin-top:5px;height:2px;background:var(--s5);border-radius:1px;overflow:hidden}
+.scfill{height:100%;border-radius:1px}
+
+@keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
+.spin{display:inline-block;width:14px;height:14px;border:2px solid var(--b3);border-top-color:var(--gold);border-radius:50%;animation:spin 0.7s linear infinite}
+.empty2{text-align:center;padding:32px;color:var(--t3);font-size:12px}
+.seclbl{font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:0.1em;font-family:'JetBrains Mono',monospace;margin-bottom:7px}
+.note2{font-size:9px;color:var(--t3);font-family:'JetBrains Mono',monospace;padding:3px 7px;background:var(--s3);border-radius:3px;display:inline-flex;align-items:center;gap:4px}
+.big-num{font-size:36px;font-family:'Syne',sans-serif;font-weight:700;line-height:1}
+.comp-card{padding:10px 12px;background:var(--s3);border-radius:var(--rs);border-left:2px solid transparent}
+.topic-pill2{display:flex;align-items:center;justify-content:space-between;padding:7px 10px;border-radius:var(--rs);margin-bottom:4px;cursor:pointer;transition:opacity 0.12s}
+.topic-pill2:hover{opacity:0.8}
+.sl-stat{display:flex;align-items:center;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--b1)}
+.sl-stat:last-child{border-bottom:none}
+.sl-stn{font-size:11px;color:var(--t2)}.sl-stv{font-size:11px;font-family:'JetBrains Mono',monospace}
+.bench-comp-add{display:flex;align-items:center;gap:7px;padding:8px 10px;border-radius:var(--rs);border:1px dashed var(--b3);cursor:pointer;color:var(--t3);font-size:11px;transition:all 0.12s;margin-top:6px}
+.bench-comp-add:hover{color:var(--gold);border-color:rgba(200,164,90,0.4);background:var(--gd)}
+
+/* ===== KEYWORD CHIPS ===== */
+.kw-zone{background:var(--s2);border:1px solid var(--b2);border-radius:var(--r);padding:12px 14px}
+.kw-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px}
+.kw-title{font-size:11px;font-weight:500;display:flex;align-items:center;gap:7px}
+.kw-meta{font-size:9px;font-family:'JetBrains Mono',monospace;color:var(--t3)}
+.kw-chips{display:flex;flex-wrap:wrap;gap:6px;min-height:28px;margin-bottom:9px}
+.kw-chip{display:inline-flex;align-items:center;gap:5px;padding:4px 8px 4px 10px;border-radius:20px;font-size:11px;font-family:'JetBrains Mono',monospace;background:var(--gd);border:1px solid rgba(200,164,90,0.3);color:var(--gold);animation:chipIn 0.18s ease}
+.kw-chip.removing{animation:chipOut 0.16s ease forwards}
+@keyframes chipIn{from{opacity:0;transform:scale(0.7)}to{opacity:1;transform:scale(1)}}
+@keyframes chipOut{from{opacity:1;transform:scale(1)}to{opacity:0;transform:scale(0.6)}}
+.kw-chip-x{cursor:pointer;font-size:13px;color:rgba(200,164,90,0.5);line-height:1;transition:color 0.1s;padding:0 1px}
+.kw-chip-x:hover{color:var(--gold)}
+.kw-empty{font-size:11px;color:var(--t3);font-style:italic;padding:4px 0}
+.kw-input-row{display:flex;gap:8px;align-items:center}
+.kw-inp{flex:1;padding:7px 11px;background:var(--s3);border:1px solid var(--b2);border-radius:var(--rs);color:var(--t1);font-size:12px;font-family:'Instrument Sans',sans-serif;outline:none;transition:border-color 0.12s}
+.kw-inp:focus{border-color:var(--gold)}
+.kw-add-btn{padding:7px 14px;background:var(--gold);border:none;border-radius:var(--rs);color:#060709;font-size:11px;font-weight:700;cursor:pointer;font-family:'Syne',sans-serif;white-space:nowrap;transition:opacity 0.12s}
+.kw-add-btn:hover{opacity:0.85}
+.kw-clear{padding:6px 10px;background:transparent;border:1px solid var(--b2);border-radius:var(--rs);color:var(--t3);font-size:10px;cursor:pointer;font-family:'Instrument Sans',sans-serif;transition:all 0.12s}
+.kw-clear:hover{border-color:var(--red);color:var(--red)}
+.kw-mode{display:flex;align-items:center;gap:7px}
+.kw-mode-btn{padding:4px 9px;font-size:10px;border:1px solid var(--b2);border-radius:3px;cursor:pointer;background:transparent;color:var(--t3);font-family:'JetBrains Mono',monospace;transition:all 0.12s}
+.kw-mode-btn.on{background:var(--gd);border-color:rgba(200,164,90,0.35);color:var(--gold)}
+.kw-suggestions{position:relative}
+.kw-sug-list{position:absolute;top:100%;left:0;right:0;background:var(--s3);border:1px solid var(--b2);border-radius:var(--rs);z-index:100;max-height:140px;overflow-y:auto;display:none}
+.kw-sug-list.open{display:block}
+.kw-sug-item{padding:6px 11px;font-size:11px;cursor:pointer;transition:background 0.1s}
+.kw-sug-item:hover{background:var(--s4)}
+.ads-result-header{display:flex;align-items:center;justify-content:space-between;padding:8px 0}
+.ads-res-count{font-size:10px;color:var(--t3);font-family:'JetBrains Mono',monospace}
+.ads-res-count span{color:var(--acid)}
+.kw-matched-pill{font-size:8px;padding:1px 5px;border-radius:2px;background:var(--gd);color:var(--gold);font-family:'JetBrains Mono',monospace;margin-right:2px}
+.ads-industry-label{font-size:9px;color:var(--t3);font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:0.1em;padding:10px 0 5px;border-top:1px solid var(--b1);margin-top:2px}
+.ads-industry-label:first-child{border-top:none;padding-top:0}
+/* storage indicator */
+.store-ind{position:fixed;bottom:12px;right:12px;padding:4px 10px;border-radius:20px;font-size:9px;font-family:'JetBrains Mono',monospace;background:var(--s2);border:1px solid var(--b1);color:var(--t3);z-index:200;transition:all 0.3s;pointer-events:none;opacity:0}
+.store-ind.show{opacity:1}
+.store-ind.ok{color:var(--acid);border-color:rgba(0,224,154,0.2)}
+.store-ind.saving{color:var(--amb);border-color:rgba(240,164,32,0.2)}
+.store-ind.err{color:var(--red);border-color:rgba(240,64,64,0.2)}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="ls">
+<div id="store-ind" class="store-ind">● Guardado</div>
+  <div class="ls-bg"></div>
+  <div class="lb">
+    <div class="ll">
+      <div class="li">TLG</div>
+      <div><div class="lt">BrandPulse</div><div class="ls2">Intelligence Platform</div></div>
+    </div>
+    <div class="lf">
+      <div class="fg"><label class="lfl">Usuario</label><input class="lfi" id="luser" type="text" placeholder="usuario@tlg.lat" value="andres@tlg.lat"></div>
+      <div class="fg"><label class="lfl">Contraseña</label><input class="lfi" id="lpass" type="password" placeholder="••••••••" value="tlg2025"></div>
+      <button class="lfb" onclick="doLogin()">Ingresar</button>
+      <div class="le" id="lerr">Credenciales incorrectas</div>
+    </div>
+    <div style="margin-top:12px"><div style="font-size:9px;color:var(--t3);text-align:center;font-family:'JetBrains Mono',monospace;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:8px">Acceso rápido</div>
+      <div class="lug">
+        <div class="lu" onclick="ql('andres@tlg.lat','tlg2025','A. Benavente','Director TLG','AB','var(--gold)')">
+          <div class="lav" style="background:rgba(200,164,90,0.15);color:var(--gold)">AB</div>
+          <div><div style="font-size:11px;font-weight:500">A. Benavente</div><div style="font-size:9px;color:var(--t3);font-family:'JetBrains Mono',monospace">Director</div></div>
+        </div>
+        <div class="lu" onclick="ql('maisa@cliente.cl','maisa25','Cliente Maisa','View Only','MA','var(--blue)')">
+          <div class="lav" style="background:rgba(64,128,240,0.15);color:var(--blue)">MA</div>
+          <div><div style="font-size:11px;font-weight:500">Maisa</div><div style="font-size:9px;color:var(--t3);font-family:'JetBrains Mono',monospace">View Only</div></div>
+        </div>
+        <div class="lu" onclick="ql('vgs@garcessilva.cl','vgs25','Eq. Garcés Silva','Cliente','GS','var(--wine)')">
+          <div class="lav" style="background:rgba(155,32,66,0.15);color:var(--wine)">GS</div>
+          <div><div style="font-size:11px;font-weight:500">Garcés Silva</div><div style="font-size:9px;color:var(--t3);font-family:'JetBrains Mono',monospace">Cliente</div></div>
+        </div>
+        <div class="lu" onclick="ql('demo@tlg.lat','demo','Demo','Demo','DM','var(--acid)')">
+          <div class="lav" style="background:rgba(0,224,154,0.15);color:var(--acid)">DM</div>
+          <div><div style="font-size:11px;font-weight:500">Demo</div><div style="font-size:9px;color:var(--t3);font-family:'JetBrains Mono',monospace">Acceso demo</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <div class="hdr">
+    <div class="hlogo">TLG</div>
+    <div class="htitle">BrandPulse</div>
+    <div class="hsep"></div>
+    <div>
+      <div style="display:flex;align-items:center;gap:7px">
+        <div class="hbrand" id="hbn">Arrow</div>
+        <div class="hpp g" id="hbh">Activa</div>
+        <div class="hmeta"><span class="ld"></span><span id="hburl">arrowchile.cl</span></div>
+      </div>
+    </div>
+    <div class="hsp"></div>
+    <div class="cv-toggle" id="cvtoggle" onclick="toggleClientView()">
+      <div class="cv-dot"></div>
+      <span id="cvlbl">Vista cliente</span>
+    </div>
+    <div class="rng">
+      <button class="rb" onclick="sr(this,'7D')">7D</button>
+      <button class="rb on" onclick="sr(this,'30D')">30D</button>
+      <button class="rb" onclick="sr(this,'90D')">90D</button>
+      <button class="rb" onclick="sr(this,'YTD')">YTD</button>
+    </div>
+    <button class="hbtn pk" onclick="runAI()">✦ Análisis AI</button>
+    <button class="hbtn">↓ Reporte</button>
+    <div class="hsep"></div>
+    <div class="huser" onclick="doLogout()">
+      <div class="huav" id="huav" style="background:rgba(200,164,90,0.15);color:var(--gold)">AB</div>
+      <div><div class="hunm" id="hunm">A. Benavente</div><div class="hurole" id="hurole">Director</div></div>
+    </div>
+  </div>
+
+  <div class="abody">
+    <!-- SIDEBAR -->
+    <aside class="sb">
+      <div class="sbl">Marcas</div>
+      <div id="sb-brands">
+        <div class="bi active" id="bi-arrow" onclick="sw('arrow')">
+          <div class="bi-av" style="background:rgba(200,164,90,0.15);color:var(--gold)">AR</div>
+          <div class="bi-inf"><div class="bi-nm">Arrow</div><div class="bi-ct">Moda masculina</div></div>
+          <div class="bi-dot" style="background:var(--acid)"></div>
+          <div class="bi-eye" onclick="toggleHide(event,'arrow')" title="Ocultar de vista cliente">👁</div>
+        </div>
+        <div class="bi" id="bi-pb" onclick="sw('pb')">
+          <div class="bi-av" style="background:rgba(64,128,240,0.15);color:var(--blue)">PB</div>
+          <div class="bi-inf"><div class="bi-nm">Piero Butti</div><div class="bi-ct">Moda masculina</div></div>
+          <div class="bi-dot" style="background:var(--acid)"></div>
+          <div class="bi-eye" onclick="toggleHide(event,'pb')" title="Ocultar de vista cliente">👁</div>
+        </div>
+        <div class="bi" id="bi-vh" onclick="sw('vh')">
+          <div class="bi-av" style="background:rgba(240,164,32,0.15);color:var(--amb)">VH</div>
+          <div class="bi-inf"><div class="bi-nm">Van Heusen</div><div class="bi-ct">Moda formal</div></div>
+          <div class="bi-dot" style="background:var(--amb)"></div>
+          <div class="bi-eye" onclick="toggleHide(event,'vh')" title="Ocultar de vista cliente">👁</div>
+        </div>
+        <div class="bi" id="bi-dc" onclick="sw('dc')">
+          <div class="bi-av" style="background:rgba(240,64,64,0.15);color:var(--red)">DC</div>
+          <div class="bi-inf"><div class="bi-nm">Discount Corner</div><div class="bi-ct">Off-price retail</div></div>
+          <div class="bi-dot" style="background:var(--red)"></div>
+          <div class="bi-eye" onclick="toggleHide(event,'dc')" title="Ocultar de vista cliente">👁</div>
+        </div>
+        <div class="bi" id="bi-vgs" onclick="sw('vgs')">
+          <div class="bi-av" style="background:rgba(155,32,66,0.15);color:var(--wine)">GS</div>
+          <div class="bi-inf"><div class="bi-nm">Garcés Silva</div><div class="bi-ct">Vino premium</div></div>
+          <div class="bi-dot" style="background:var(--acid)"></div>
+          <div class="bi-eye" onclick="toggleHide(event,'vgs')" title="Ocultar de vista cliente">👁</div>
+        </div>
+      </div>
+      <div id="extra-sb"></div>
+      <div class="addbtn" onclick="openModal('brand')"><span style="font-size:14px">+</span> Agregar marca</div>
+      <div class="sbft">
+        <div class="snl"><span>⚙</span> Config</div>
+        <div class="snl"><span>🔗</span> APIs</div>
+        <div class="snl" onclick="doLogout()"><span>→</span> Salir</div>
+      </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main">
+      <div class="tabs">
+        <div class="tab on" onclick="showTab('ov',this)">Overview</div>
+        <div class="tab" onclick="showTab('sl',this)">Escucha Social</div>
+        <div class="tab" onclick="showTab('ais',this)">🤖 AI Search</div>
+        <div class="tab" onclick="showTab('ads',this)">Ad Intelligence</div>
+        <div class="tab" onclick="showTab('bench',this)">Benchmark</div>
+        <div class="tab" onclick="showTab('ai',this)">Insights AI</div>
+      </div>
+
+      <div class="ca">
+
+        <!-- ===== OVERVIEW ===== -->
+        <div class="tp on" id="tab-ov">
+          <div class="g6" id="kpi-row"></div>
+          <div class="g31">
+            <!-- Sentiment -->
+            <div class="card">
+              <div class="ch"><div class="ct"><div class="ci" style="background:var(--ad)">😊</div>Sentimiento</div><div class="ca2">Fuente: Social Listen.</div></div>
+              <div class="cb">
+                <div class="sr"><canvas id="sentChart" width="100" height="100"></canvas><div class="sc2"><div class="sp2" id="spct">74%</div><div class="sw2">positivo</div></div></div>
+                <div id="sent-bd"></div>
+                <div style="margin-top:9px;padding-top:8px;border-top:1px solid var(--b1)">
+                  <div class="seclbl">Temas frecuentes</div>
+                  <div class="tags2" id="tags-wrap"></div>
+                </div>
+              </div>
+            </div>
+            <!-- Channels -->
+            <div class="card">
+              <div class="ch"><div class="ct"><div class="ci" style="background:var(--bd)">📱</div>Canales sociales</div><div class="ca2">Fuente: Plataformas</div></div>
+              <div class="cb" style="padding-top:5px" id="chs-wrap"></div>
+            </div>
+            <!-- Traffic -->
+            <div class="card">
+              <div class="ch"><div class="ct"><div class="ci" style="background:var(--amd)">🌐</div>Tráfico web</div><div class="ca2">Fuente: Analytics est.</div></div>
+              <div class="cb" id="tf-wrap"></div>
+            </div>
+          </div>
+          <div class="g2">
+            <!-- Eng Chart -->
+            <div class="card">
+              <div class="ch"><div class="ct"><div class="ci" style="background:var(--gd)">📈</div>Engagement & Alcance</div>
+                <div style="display:flex;gap:10px"><span style="font-size:9px;color:var(--acid);font-family:'JetBrains Mono',monospace">■ Eng.</span><span style="font-size:9px;color:var(--blue);font-family:'JetBrains Mono',monospace">■ Alcance</span></div>
+              </div>
+              <div class="cb" style="padding-bottom:8px"><div style="height:155px;position:relative"><canvas id="engChart"></canvas></div></div>
+            </div>
+            <!-- Latest Articles -->
+            <div class="card">
+              <div class="ch"><div class="ct"><div class="ci" style="background:var(--s4)">📰</div>Menciones web · más recientes primero</div><div class="ca2">Ver todo →</div></div>
+              <div class="cb" style="padding-top:3px" id="art-wrap"></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="ch"><div class="ct"><div class="ci" style="background:var(--gd)">✦</div>Oportunidades de marca</div><div class="ca2" onclick="runAI()">Actualizar AI →</div></div>
+            <div class="cb" style="padding-top:6px"><div class="g3" id="ins-wrap"></div></div>
+          </div>
+        </div>
+
+        <!-- ===== SOCIAL LISTENING ===== -->
+        <div class="tp" id="tab-sl">
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <div>
+              <div style="font-family:'Syne',sans-serif;font-size:14px;font-weight:700;margin-bottom:2px">Escucha Social · <span id="sl-nm" style="color:var(--gold)">Arrow</span></div>
+              <div style="font-size:10px;color:var(--t3);font-family:'JetBrains Mono',monospace">Conversaciones ordenadas de más reciente a más antigua · Click en fuente para ver original</div>
+            </div>
+            <div class="note2">⚠ Datos estimados · Conectar Brandwatch/Mention para datos reales</div>
+          </div>
+          <div class="g4" id="sl-kpis"></div>
+          <div class="g3">
+            <div class="card" style="grid-column:1/span 2">
+              <div class="ch"><div class="ct"><div class="ci" style="background:var(--ad)">💬</div>Conversaciones activas · más nuevas primero</div><div class="ca2" id="sl-conv-src" style="font-size:9px">Instagram · TikTok · X · Facebook</div></div>
+              <div class="cb" style="padding-top:4px" id="sl-convos"></div>
+            </div>
+            <div>
+              <div class="card" style="margin-bottom:12px">
+                <div class="ch"><div class="ct"><div class="ci" style="background:var(--bd)">🔥</div>Temas en tendencia</div><div class="ca2" style="font-size:9px">Fuente: Est. Social Listen.</div></div>
+                <div class="cb" style="padding-top:4px" id="sl-topics"></div>
+              </div>
+              <div class="card">
+                <div class="ch"><div class="ct"><div class="ci" style="background:var(--amd)">📊</div>Métricas de escucha</div></div>
+                <div class="cb" id="sl-stats"></div>
+              </div>
+            </div>
+          </div>
+          <div class="g2">
+            <div class="card">
+              <div class="ch"><div class="ct"><div class="ci" style="background:var(--pud)">📡</div>Volumen de menciones · 90D</div><div class="ca2" style="font-size:9px">Fuente: Estimado TLG</div></div>
+              <div class="cb" style="padding-bottom:8px"><div style="height:140px;position:relative"><canvas id="slChart"></canvas></div></div>
+            </div>
+            <div class="card">
+              <div class="ch"><div class="ct"><div class="ci" style="background:var(--rd)">⚠</div>Alertas · menciones críticas</div><div class="ca2">Responder →</div></div>
+              <div class="cb" style="padding-top:5px" id="sl-alerts"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===== AI SEARCH ===== -->
+        <div class="tp" id="tab-ais">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+            <div>
+              <div style="font-family:'Syne',sans-serif;font-size:14px;font-weight:700;margin-bottom:2px">Presencia en Inteligencia Artificial · <span id="ais-nm" style="color:var(--gold)">Arrow</span></div>
+              <div style="font-size:10px;color:var(--t3);font-family:'JetBrains Mono',monospace">Cómo encuentra la marca la IA · qué responden ChatGPT, Perplexity, Gemini, Copilot y Claude · búsquedas en AI en redes sociales</div>
+            </div>
+            <div class="note2">Datos estimados · Basado en análisis manual y herramientas de AI monitoring</div>
+          </div>
+
+          <!-- Engine presence scores -->
+          <div>
+            <div class="seclbl">Presencia de marca en motores de IA · Score 0–100</div>
+            <div class="ai-engine-grid" id="ai-engines"></div>
+          </div>
+
+          <div class="g2">
+            <!-- How AI answers about the brand -->
+            <div class="card">
+              <div class="ch"><div class="ct"><div class="ci" style="background:var(--bd)">💬</div>Cómo responde la IA sobre la marca</div><div class="ca2" style="font-size:9px">Fuente: Análisis manual ChatGPT + Perplexity</div></div>
+              <div class="cb" style="padding-top:5px" id="ai-responses"></div>
+            </div>
+            <!-- AI Search volume by query -->
+            <div class="card">
+              <div class="ch"><div class="ct"><div class="ci" style="background:var(--pud)">🔍</div>Queries de categoría en AI</div><div class="ca2" style="font-size:9px">Fuente: Perplexity Labs + SEMrush AI</div></div>
+              <div class="cb" style="padding-top:4px" id="ai-queries"></div>
+            </div>
+          </div>
+
+          <div class="g3">
+            <!-- Social AI search -->
+            <div class="card">
+              <div class="ch"><div class="ct"><div class="ci" style="background:var(--pud)">📲</div>Búsquedas en IA en redes sociales</div><div class="ca2" style="font-size:9px">TikTok Search · IG Search · Pinterest Lens</div></div>
+              <div class="cb" style="padding-top:4px" id="social-ai"></div>
+            </div>
+            <!-- AI Overview presence -->
+            <div class="card">
+              <div class="ch"><div class="ct"><div class="ci" style="background:var(--ad)">📋</div>AI Overview · Fragmentos destacados</div><div class="ca2" style="font-size:9px">Fuente: Google AI Overviews</div></div>
+              <div class="cb" id="ai-overviews"></div>
+            </div>
+            <!-- AI vs Google comparison -->
+            <div class="card">
+              <div class="ch"><div class="ct"><div class="ci" style="background:var(--amd)">⚡</div>AI Search vs Google · Tendencia</div><div class="ca2" style="font-size:9px">Fuente: SparkToro + Datos est.</div></div>
+              <div class="cb" style="padding-bottom:8px"><div style="height:140px;position:relative"><canvas id="aiTrendChart"></canvas></div></div>
+            </div>
+          </div>
+
+          <!-- Best AI tools for brands -->
+          <div class="card">
+            <div class="ch"><div class="ct"><div class="ci" style="background:var(--bd)">🏆</div>Mejores herramientas de AI para monitoreo de marca</div><div class="ca2">Fuente: TLG Research 2025</div></div>
+            <div class="cb"><div class="g3" id="ai-tools"></div></div>
+          </div>
+        </div>
+
+        <!-- ===== AD INTEL ===== -->
+        <div class="tp" id="tab-ads">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+            <div>
+              <div style="font-family:'Syne',sans-serif;font-size:14px;font-weight:700;margin-bottom:2px">Ad Intelligence</div>
+              <div style="font-size:10px;color:var(--t3);font-family:'JetBrains Mono',monospace">Solo anuncios activos · Meta Ads Library · Google Transparency · TikTok Ads</div>
+            </div>
+            <div class="note2" id="ads-live-label">● Sin keywords → top industria activos · Con keywords → filtro exacto</div>
+          </div>
+
+          <!-- KEYWORD ZONE -->
+          <div class="kw-zone">
+            <div class="kw-header">
+              <div class="kw-title">
+                🏷 Keywords activos
+                <span class="kw-meta" id="kw-count-label">Sin keywords · mostrando top industria</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px">
+                <div class="kw-mode">
+                  <span style="font-size:9px;color:var(--t3);font-family:'JetBrains Mono',monospace">Modo:</span>
+                  <button class="kw-mode-btn on" id="mode-any" onclick="setMode('ANY')">CUALQUIERA</button>
+                  <button class="kw-mode-btn" id="mode-all" onclick="setMode('ALL')">TODAS</button>
+                </div>
+                <button class="kw-clear" onclick="clearAllKw()">✕ Limpiar todo</button>
+              </div>
+            </div>
+            <div class="kw-chips" id="kw-chips">
+              <span class="kw-empty" id="kw-empty-msg">Sin keywords — mostrando avisos top de la industria de la marca activa</span>
+            </div>
+            <div class="kw-input-row">
+              <div class="kw-suggestions" style="flex:1;position:relative">
+                <input class="kw-inp" id="kw-inp" placeholder="Agregar keyword… ej: camisa verano, vino, CYBER, descuento, outlet · Enter para agregar" onkeydown="kwKeydown(event)" oninput="kwSuggest(this.value)">
+                <div class="kw-sug-list" id="kw-sug"></div>
+              </div>
+              <button class="kw-add-btn" onclick="addKwFromInput()">+ Agregar</button>
+            </div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:9px">
+              <span style="font-size:9px;color:var(--t3);font-family:'JetBrains Mono',monospace;align-self:center">Rápidos:</span>
+              <div class="sf2 hl" onclick="addKw('CYBER')">🔥 CYBER</div>
+              <div class="sf2 hl" onclick="addKw('camisa')">👔 camisa</div>
+              <div class="sf2 hl" onclick="addKw('vino')">🍷 vino</div>
+              <div class="sf2 hl" onclick="addKw('formal')">💼 formal</div>
+              <div class="sf2 hl" onclick="addKw('outlet')">💥 outlet</div>
+              <div class="sf2 hl" onclick="addKw('verano')">☀ verano</div>
+              <div class="sf2 hl" onclick="addKw('descuento')">🏷 descuento</div>
+              <div class="sf2 hl" onclick="addKw('Arrow')">⭑ Arrow</div>
+              <div class="sf2 hl" onclick="addKw('vino premium')">🍾 vino premium</div>
+              <div class="sf2 hl" onclick="addKw('moda masculina')">👗 moda masculina</div>
+            </div>
+          </div>
+
+          <!-- RESULTS AREA -->
+          <div class="ads-result-header">
+            <div class="ads-res-count" id="ads-res-txt">Cargando…</div>
+            <div style="font-size:9px;color:var(--t3);font-family:'JetBrains Mono',monospace">Fuente: Meta Ads Library / Google Transparency · estimado</div>
+          </div>
+
+          <div id="ads-loading" style="display:none;padding:28px;text-align:center">
+            <div class="spin" style="margin:0 auto 8px;width:18px;height:18px"></div>
+            <div style="font-size:10px;color:var(--t3);font-family:'JetBrains Mono',monospace">Consultando biblioteca de anuncios…</div>
+          </div>
+          <div id="ads-grid" class="adg"></div>
+        </div>
+
+        <!-- ===== BENCHMARK ===== -->
+        <div class="tp" id="tab-bench">
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <div>
+              <div style="font-family:'Syne',sans-serif;font-size:14px;font-weight:700;margin-bottom:2px">Benchmark competitivo · <span id="bench-lbl" style="color:var(--gold)">Moda masculina Chile</span></div>
+              <div style="font-size:10px;color:var(--t3);font-family:'JetBrains Mono',monospace">Competidores reales en Chile por categoría y precio · Datos estimados con metodología TLG</div>
+            </div>
+          </div>
+          <div class="g4" id="bkpi-row"></div>
+          <div class="g2">
+            <div class="card">
+              <div class="ch"><div class="ct"><div class="ci" style="background:var(--ad)">⚡</div>Share of voice</div><div class="ca2" style="font-size:9px">Fuente: Social mention est. TLG</div></div>
+              <div class="cb">
+                <div class="bg2" id="bench-brands"></div>
+                <div style="font-size:10px;color:var(--t3);margin-bottom:4px;font-family:'JetBrains Mono',monospace">Cuota de voz en redes sociales</div>
+                <div class="sov" id="sov-bar"></div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="ch"><div class="ct"><div class="ci" style="background:var(--bd)">🕸</div>Radar competitivo</div></div>
+              <div class="cb"><div style="height:190px;position:relative"><canvas id="radarChart"></canvas></div></div>
+            </div>
+          </div>
+          <div class="g3">
+            <div class="card">
+              <div class="ch"><div class="ct"><div class="ci" style="background:var(--ad)">😊</div>Sentimiento</div><div class="ca2" style="font-size:9px">Est.</div></div>
+              <div class="cb"><div style="height:140px;position:relative"><canvas id="scc"></canvas></div></div>
+            </div>
+            <div class="card">
+              <div class="ch"><div class="ct"><div class="ci" style="background:var(--bd)">📈</div>Engagement</div><div class="ca2" style="font-size:9px">Est.</div></div>
+              <div class="cb"><div style="height:140px;position:relative"><canvas id="ecc"></canvas></div></div>
+            </div>
+            <div class="card">
+              <div class="ch"><div class="ct"><div class="ci" style="background:var(--amd)">🌐</div>Tráfico web</div><div class="ca2" style="font-size:9px">Est.</div></div>
+              <div class="cb"><div style="height:140px;position:relative"><canvas id="wcc"></canvas></div></div>
+            </div>
+          </div>
+          <!-- Competitors detail + add -->
+          <div class="card">
+            <div class="ch">
+              <div class="ct"><div class="ci" style="background:var(--gd)">🧭</div>Competidores directos · Chile · mismo segmento y precio</div>
+              <div class="ca2" onclick="openModal('comp')">+ Agregar competidor →</div>
+            </div>
+            <div class="cb" style="padding-top:8px"><div class="g4" id="comp-detail"></div>
+              <div class="bench-comp-add" onclick="openModal('comp')"><span style="font-size:14px">+</span> Agregar competidor al benchmark</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===== AI INSIGHTS ===== -->
+        <div class="tp" id="tab-ai">
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <div>
+              <div style="font-family:'Syne',sans-serif;font-size:14px;font-weight:700;margin-bottom:2px">Análisis estratégico AI</div>
+              <div style="font-size:10px;color:var(--t3);font-family:'JetBrains Mono',monospace">Inteligencia para construir marcas poderosas en Chile</div>
+            </div>
+            <button class="hbtn pk" onclick="runAI()">✦ Regenerar análisis</button>
+          </div>
+          <div id="ai-out"><div class="empty2"><div style="font-size:24px;opacity:0.4;margin-bottom:8px">✦</div>Pulsa "Regenerar análisis" para análisis estratégico AI de la marca activa.</div></div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- MODALS -->
+<div class="mov" id="modal">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="mttl" id="modal-title">Agregar marca</div>
+    <div id="modal-body"></div>
+    <div class="macts"><button class="bg3" onclick="closeModal()">Cancelar</button><button class="bp" onclick="modalConfirm()">Confirmar</button></div>
+  </div>
+</div>
+
+<script>
+// =================== USERS ===================
+const USERS={'andres@tlg.lat':{pass:'tlg2025',nm:'A. Benavente',role:'Director',av:'AB',ac:'var(--gold)'},'maisa@cliente.cl':{pass:'maisa25',nm:'Maisa',role:'View Only',av:'MA',ac:'var(--blue)'},'vgs@garcessilva.cl':{pass:'vgs25',nm:'Eq. Garcés Silva',role:'Cliente',av:'GS',ac:'var(--wine)'},'demo@tlg.lat':{pass:'demo',nm:'Demo',role:'Demo',av:'DM',ac:'var(--acid)'}};
+let curUser=null,clientView=false,hiddenBrands=new Set(),modalMode='brand';
+let cur='arrow'; const ch={}; let customBenchCompetitors={};
+const charts={};
+
+function doLogin(){const u=document.getElementById('luser').value.trim(),p=document.getElementById('lpass').value.trim(),usr=USERS[u];if(usr&&usr.pass===p){launch(u,usr);}else{document.getElementById('lerr').style.display='block';}}
+function ql(u,p,nm,role,av,ac){USERS[u]={pass:p,nm,role,av,ac};document.getElementById('luser').value=u;document.getElementById('lpass').value=p;doLogin();}
+function launch(u,usr){
+  curUser=usr;
+  document.getElementById('ls').style.display='none';
+  document.getElementById('app').classList.add('on');
+  document.getElementById('huav').textContent=usr.av;
+  document.getElementById('huav').style.background=usr.ac+'22';
+  document.getElementById('huav').style.color=usr.ac;
+  document.getElementById('hunm').textContent=usr.nm;
+  document.getElementById('hurole').textContent=usr.role;
+  // load persisted state then render
+  loadState().then(()=>{
+    // restore sidebar active
+    document.querySelectorAll('.bi').forEach(b=>{b.classList.remove('active');if(b.id==='bi-'+cur)b.classList.add('active');});
+    // restore client view hidden brands
+    if(hiddenBrands.size){hiddenBrands.forEach(k=>{const eye=document.querySelector(`#bi-${k} .bi-eye`);if(eye)eye.style.opacity='0.3';});}
+    // restore mode buttons
+    document.getElementById('mode-any')?.classList.toggle('on',kwSearchMode==='ANY');
+    document.getElementById('mode-all')?.classList.toggle('on',kwSearchMode==='ALL');
+    renderChips();
+    render();
+    applyAdsFilter();
+  });
+}
+function doLogout(){document.getElementById('app').classList.remove('on');document.getElementById('ls').style.display='flex';}
+
+function toggleClientView(){
+  clientView=!clientView;
+  const tog=document.getElementById('cvtoggle');
+  const lbl=document.getElementById('cvlbl');
+  tog.classList.toggle('on',clientView);
+  lbl.textContent=clientView?'Vista cliente ON':'Vista cliente';
+  // hide/show brands in sidebar
+  document.querySelectorAll('[id^="bi-"]').forEach(el=>{
+    const key=el.id.replace('bi-','');
+    if(clientView&&hiddenBrands.has(key)){el.style.display='none';}
+    else{el.style.display='flex';}
+  });
+  document.querySelectorAll('.bi-eye').forEach(e=>{e.style.display=clientView?'none':'';});
+}
+
+function toggleHide(e,key){
+  e.stopPropagation();
+  if(hiddenBrands.has(key)){hiddenBrands.delete(key);e.target.style.opacity='1';}
+  else{hiddenBrands.add(key);e.target.style.opacity='0.3';}
+}
+
+// =================== DATA ===================
+const DB={
+  arrow:{
+    name:'Arrow',url:'arrowchile.cl',cat:'Moda masculina',health:'Activa',hcls:'g',
+    kpis:[
+      {l:'Instagram',v:'22K',d:'+4% / 30D',dt:'p',t:'g',note:'@arrowchile · verificado'},
+      {l:'Facebook',v:'141K',d:'fans · verificado',dt:'p',t:'g',note:'ArrowEnChile · fan page'},
+      {l:'Engagement IG',v:'~2.8%',d:'estimado',dt:'p',t:'g',note:'Metodología TLG'},
+      {l:'Alcance semanal',v:'~48K',d:'+12% · est.',dt:'p',t:'g',note:'Estimado TLG'},
+      {l:'Visitas web/mes',v:'~32K',d:'−4% · est.',dt:'n',t:'a',note:'Google Analytics est.'},
+      {l:'Tasa de rebote',v:'~64%',d:'alta · est.',dt:'n',t:'r',note:'Estimado TLG'},
+    ],
+    sent:[68,22,10],
+    tags:['calidad tela','camisa vestir','precio justo','estilo formal','nueva colección'],
+    channels:[
+      {ico:'📷',nm:'Instagram',hd:'@arrowchile',col:'#E1306C',fol:'22K',d:'+4%',dt:'p',eng:'~2.8%',src:'instagram.com/arrowchile',src_v:true},
+      {ico:'📘',nm:'Facebook',hd:'ArrowEnChile',col:'#1877F2',fol:'141K',d:'verificado',dt:'p',eng:'~0.8%',src:'facebook.com/ArrowEnChile',src_v:true},
+      {ico:'🎵',nm:'TikTok',hd:'Inactivo',col:'#ff0050',fol:'—',d:'oportunidad',dt:'w',eng:'—',src:null,src_v:false},
+    ],
+    traffic:{
+      stats:[
+        {nm:'Meta (IG + FB)',v:'~22% tráfico',t:'g',src:'Meta Business est.'},{nm:'Google Search',v:'~40% tráfico',t:'g',src:'Google Analytics est.'},
+        {nm:'Directo',v:'~25% tráfico',t:'a',src:'Analytics est.'},{nm:'Otros links',v:'~13% tráfico',t:'n',src:'Referidos varios'},
+        {nm:'Conv. ecommerce',v:'~1.2%',t:'a',src:'Estimado TLG'},
+      ],
+      src:[{l:'Google 40%',p:40,c:'var(--blue)'},{l:'Meta 22%',p:22,c:'#E1306C'},{l:'Directo 25%',p:25,c:'var(--gold)'},{l:'Otros 13%',p:13,c:'var(--amb)'}],
+    },
+    aitrends:[
+      {q:'camisas de vestir hombre Chile',v:92},{q:'marcas ropa formal masculina',v:87},
+      {q:'camisa Arrow precio Chile',v:74},{q:'mejores camisas para oficina',v:68},
+      {q:'Arrow vs Doritex calidad',v:55},{q:'camisa lino verano hombre',v:48},
+    ],
+    articles:[
+      {ttl:'Arrow lanza colección linen verano 2025 con foco en sustentabilidad',src:'Fashionclick.cl',url:'https://fashionclick.cl',dt:'2025-03-15',s:'p'},
+      {ttl:'Las 10 marcas de camisas más vendidas en Chile · ranking trimestral',src:'Retail Actual',url:'https://retailactual.cl',dt:'2025-03-12',s:'n'},
+      {ttl:'Moda masculina formal: Arrow lidera reconocimiento de marca',src:'Modamagazine.lat',url:'https://modamagazine.lat',dt:'2025-03-08',s:'p'},
+      {ttl:'Review GQ Chile: las mejores dress shirts del mercado local 2025',src:'GQ Chile',url:'https://gq.com/chile',dt:'2025-03-04',s:'p'},
+      {ttl:'Demoras en despacho reportadas en redes sociales de la marca',src:'Twitter/X usuarios',url:'https://x.com/search?q=arrow+despacho',dt:'2025-02-28',s:'r'},
+    ],
+    bench:[
+      {nm:'Arrow',sc:34,c:'var(--gold)',bg:'var(--gd)',you:true},
+      {nm:'Doritex',sc:28,c:'var(--t2)',bg:'var(--s3)'},
+      {nm:'Potros',sc:18,c:'var(--t2)',bg:'var(--s3)'},
+      {nm:'Gef',sc:14,c:'var(--t3)',bg:'var(--s4)'},
+    ],
+    benchLabel:'Camisas & moda masculina formal Chile',
+    competitors:[
+      {nm:'Doritex',cat:'Fabricante CL · camisa formal',pr:'$$',sov:28,ig:'@doritex',risk:'m',est:'Manufactura nacional · precio similar · IG activo · competidor directo en camisa vestir'},
+      {nm:'Potros',cat:'Vestuario masculino CL',pr:'$$',sov:18,ig:'@potros.cl',risk:'m',est:'+40 años en Chile · casual y formal · mayor cobertura en regiones · menos premium'},
+      {nm:'Gef',cat:'Moda colombiana casual-formal',pr:'$$',sov:14,ig:'@gef',risk:'m',est:'Fuerte en Falabella y Ripley · diseño moderno · ataca segmento 25-40 con mejor digital'},
+      {nm:'Zara Hombre',cat:'Fast fashion aspiracional',pr:'$$$',sov:10,ig:'@zara',risk:'h',est:'Alta percepción de diseño · precios similares · afecta segmento 22-35 urbano'},
+    ],
+    ins:[
+      {t:'g',txt:'<strong>141K en Facebook es el mayor activo digital de la marca.</strong> Base calificada sin monetizar. Retargeting hacia ecommerce tiene ROI comprobado en retail fashion.'},
+      {t:'a',txt:'<strong>22K en Instagram es gap real.</strong> Doritex y Potros tienen mayor actividad en algunos formatos. Cerrar la brecha requiere 2 posts/día por 90 días.'},
+      {t:'r',txt:'<strong>Rebote estimado ~64%</strong> indica que el tráfico social no convierte. Landing pages específicas por campaña pueden reducirlo a <45% en 60 días.'},
+      {t:'b',txt:'<strong>TikTok sin actividad</strong> es la mayor oportunidad. La competencia directa (Doritex, Potros, Gef) no tiene presencia sólida. Ventana de liderazgo: 6 meses.'},
+    ],
+    eng:{labels:['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'],eng:[2.1,2.3,2.2,2.5,2.7,2.6,2.9,2.8,2.9,2.8,3.0,2.8],reach:[28,31,30,36,40,38,45,43,46,48,50,48]},
+    bkpis:[{l:'Posición',v:'#1',d:'reconoc. categoría',dt:'p',t:'g'},{l:'SOV vs comp.',v:'+6pp',d:'vs Doritex',dt:'p',t:'g'},{l:'IG · verificado',v:'22K',d:'@arrowchile',dt:'p',t:'g'},{l:'FB · verificado',v:'141K',d:'fans',dt:'p',t:'g'},{l:'Eng. promedio',v:'~2.8%',d:'estimado TLG',dt:'w',t:'a'},{l:'TikTok',v:'Inactivo',d:'oportunidad',dt:'w',t:'a'}],
+    ai:{
+      engines:[
+        {nm:'ChatGPT',logo:'🤖',score:42,lbl:'Menciones ocasionales',src:'gpt.com',c:'var(--acid)',bg:'var(--ad)'},
+        {nm:'Perplexity',logo:'🔭',score:55,lbl:'Aparece en queries',src:'perplexity.ai',c:'var(--blue)',bg:'var(--bd)'},
+        {nm:'Gemini',logo:'✨',score:38,lbl:'Presencia baja',src:'gemini.google.com',c:'var(--amb)',bg:'var(--amd)'},
+        {nm:'Copilot',logo:'🪟',score:30,lbl:'Muy baja',src:'bing.com',c:'var(--t2)',bg:'var(--s3)'},
+        {nm:'Claude',logo:'🧡',score:48,lbl:'Menciones en contexto',src:'claude.ai',c:'var(--pur)',bg:'var(--pud)'},
+      ],
+      responses:[
+        {platform:'Perplexity',logo:'🔭',q:'¿Qué marcas de camisas formales hay en Chile?',resp:'"Arrow Chile es una de las marcas más reconocidas en camisas de vestir masculinas, presente desde hace décadas en el mercado chileno..."',vol:'~340/sem',src:'perplexity.ai'},
+        {platform:'ChatGPT',logo:'🤖',q:'mejores camisas hombre Chile precio calidad',resp:'"Arrow es frecuentemente mencionada entre las opciones de mejor relación precio-calidad en el segmento formal chileno..."',vol:'~220/sem',src:'chat.openai.com'},
+        {platform:'Gemini',logo:'✨',q:'marcas ropa formal masculina Chile',resp:'Las respuestas de Gemini aún no incluyen Arrow de forma consistente en este tipo de queries. Oportunidad de contenido.',vol:'~180/sem',src:'gemini.google.com'},
+      ],
+      queries:[
+        {q:'camisas de vestir hombre Chile',v:92,plat:'Perplexity'},{q:'marcas ropa formal masculina',v:87,plat:'ChatGPT'},
+        {q:'mejor camisa para oficina precio justo',v:74,plat:'Perplexity'},{q:'Arrow camisa opiniones reales',v:62,plat:'ChatGPT'},
+        {q:'camisa lino formal Chile 2025',v:55,plat:'Gemini'},{q:'alternativa Zara hombre Chile',v:44,plat:'Perplexity'},
+      ],
+      social:[
+        {plat:'🎵',nm:'TikTok Search',q:'camisa formal trabajo chile',vol:'8.2K búsq/sem',trend:'+34%',src:'TikTok Analytics'},
+        {plat:'📷',nm:'IG Search',q:'arrow camisa',vol:'4.1K búsq/sem',trend:'+12%',src:'Instagram Insights'},
+        {plat:'📌',nm:'Pinterest',q:'men formal shirt chile',vol:'2.8K búsq/sem',trend:'+8%',src:'Pinterest Analytics'},
+        {plat:'🎵',nm:'TikTok Search',q:'outfit camisa vestir hombre',vol:'14.2K búsq/sem',trend:'+56%',src:'TikTok Analytics'},
+        {plat:'🔍',nm:'Google AI Overview',q:'camisas de vestir hombre',vol:'22K búsq/sem',trend:'+18%',src:'Google Search Console'},
+      ],
+      overviews:[
+        {query:'camisas formales hombre Chile',present:false,txt:'Arrow NO aparece en AI Overview de Google para este query. Doritex y tiendas Ripley sí aparecen.',t:'r'},
+        {query:'marcas ropa masculina formal',present:true,txt:'Arrow es mencionada en AI Overview como marca histórica del segmento formal chileno.',t:'g'},
+        {query:'mejor camisa precio calidad Chile',present:false,txt:'Arrow no aparece. Falabella y Zara dominan el fragmento destacado.',t:'r'},
+      ],
+    },
+    sl:{
+      kpis:[{l:'Menciones/sem',v:'~840',d:'estimado TLG',t:'g'},{l:'Sent. positivo',v:'68%',d:'estimado',t:'g'},{l:'Sent. negativo',v:'10%',d:'estimado',t:'a'},{l:'Temas únicos',v:'24',d:'esta semana',t:'g'}],
+      convos:[
+        {ico:'📷',bg:'#E1306C22',txt:'"La camisa linen de Arrow para el matrimonio quedó increíble. Primera vez que me felicitan tanto por la ropa"',plat:'Instagram',s:'p',likes:'142',dt:'2025-03-18',url:'https://instagram.com/p/ejemplo1'},
+        {ico:'🎵',bg:'#ff005022',txt:'"Arrow camisas de vestir, las que más aguantan. Ya tengo 4 y las sigo usando igual"',plat:'TikTok',s:'p',likes:'89',dt:'2025-03-16',url:'https://tiktok.com/@ejemplo'},
+        {ico:'📘',bg:'#1877F222',txt:'"Pedí hace 12 días y sigo esperando. El despacho de Arrow está pésimo últimamente 😤"',plat:'Facebook',s:'r',likes:'34',dt:'2025-03-14',url:'https://facebook.com/posts/ejemplo'},
+        {ico:'🐦',bg:'rgba(29,161,242,0.15)',txt:'"¿Arrow tiene tienda en Iquique? Pregunté en DM y nunca contestaron"',plat:'Twitter/X',s:'n',likes:'8',dt:'2025-03-12',url:'https://x.com/search?q=arrow+iquique'},
+        {ico:'📷',bg:'#E1306C22',txt:'"Comparé Arrow vs Doritex. La calidad de tela es mejor en Arrow, pero Doritex tiene mejores tallas"',plat:'Instagram',s:'n',likes:'44',dt:'2025-03-10',url:'https://instagram.com/p/ejemplo2'},
+      ],
+      topics:[{nm:'Calidad de tela',vol:'224 mencs.',chg:'+18%',t:'g'},{nm:'Camisa linen verano',vol:'187 mencs.',chg:'+44%',t:'g'},{nm:'Problemas despacho',vol:'94 mencs.',chg:'+28%',t:'r'},{nm:'Comparación precios',vol:'88 mencs.',chg:'+5%',t:'n'},{nm:'Colores disponibles',vol:'62 mencs.',chg:'+12%',t:'g'},{nm:'Tallas',vol:'48 mencs.',chg:'+8%',t:'n'}],
+      stats:[{nm:'Plataforma top',v:'Facebook',t:'g'},{nm:'Sent. positivo',v:'68%',t:'g'},{nm:'Sent. negativo',v:'10%',t:'a'},{nm:'CM activo',v:'No detectado',t:'r'},{nm:'Sent. neto',v:'+58pp',t:'g'},{nm:'Riesgo rep.',v:'BAJO-MEDIO',t:'a'}],
+      alerts:[{txt:'94 menciones sobre "problemas de despacho" sin respuesta oficial · riesgo escalada en 14 días',t:'r'},{txt:'Usuarios preguntan por cobertura en regiones (Iquique, Antofagasta) — oportunidad de respuesta',t:'a'},{txt:'Comparaciones Arrow vs Doritex en Instagram — contenido de terceros sin participación de la marca',t:'a'}],
+    },
+  },
+  pb:{
+    name:'Piero Butti',url:'pierobuttistore.cl',cat:'Ropa masculina',health:'En construcción',hcls:'a',
+    kpis:[
+      {l:'Instagram',v:'~1.2K',d:'@piero_butti · est.',dt:'w',t:'a',note:'Handle confirmado · en crecimiento'},
+      {l:'Facebook',v:'Bajo',d:'en desarrollo',dt:'n',t:'a',note:'Presencia limitada'},
+      {l:'Engagement IG',v:'~4.1%',d:'est. · bueno',dt:'p',t:'g',note:'Comunidades pequeñas tienen eng. alto'},
+      {l:'Alcance semanal',v:'~6K',d:'estimado',dt:'w',t:'a',note:'Estimado TLG'},
+      {l:'Visitas web/mes',v:'~8K',d:'est. · creciendo',dt:'p',t:'g',note:'pierobuttistore.cl'},
+      {l:'Dist. Falabella',v:'Alta',d:'ventaja clave',dt:'p',t:'g',note:'Presente en Falabella.com + Ripley'},
+    ],
+    sent:[72,18,10],
+    tags:['ropa masculina','italiano','estilo','formal casual','premium accesible','outfit'],
+    channels:[
+      {ico:'📷',nm:'Instagram',hd:'@piero_butti',col:'#E1306C',fol:'~1.2K',d:'handle confirmado',dt:'w',eng:'~4.1%',src:'instagram.com/piero_butti',src_v:false},
+      {ico:'🛒',nm:'Falabella.com',hd:'Tienda oficial',col:'#4CAF50',fol:'Catálogo activo',d:'alta visibilidad',dt:'p',eng:'—',src:'falabella.com',src_v:true},
+      {ico:'🌐',nm:'pierobuttistore.cl',hd:'E-commerce propio',col:'var(--blue)',fol:'~8K/mes',d:'creciendo',dt:'p',eng:'—',src:'pierobuttistore.cl',src_v:true},
+    ],
+    traffic:{
+      stats:[{nm:'Falabella + Ripley',v:'~45% tráfico',t:'g',src:'Falabella Seller'},{nm:'Google Search',v:'~28% tráfico',t:'g',src:'GSC est.'},{nm:'Meta (IG)',v:'~15% tráfico',t:'a',src:'Meta Business est.'},{nm:'Directo',v:'~12% tráfico',t:'a',src:'Analytics est.'},{nm:'Conv. ecommerce',v:'~1.8%',t:'g',src:'Estimado TLG'}],
+      src:[{l:'Falabella/Rip 45%',p:45,c:'#4CAF50'},{l:'Google 28%',p:28,c:'var(--blue)'},{l:'Meta 15%',p:15,c:'#E1306C'},{l:'Directo 12%',p:12,c:'var(--gold)'}],
+    },
+    aitrends:[
+      {q:'ropa masculina formal Chile',v:88},{q:'tienda ropa hombre premium CL',v:78},
+      {q:'piero butti ropa tienda',v:72},{q:'outfit formal masculino Chile',v:64},
+      {q:'moda hombre italiana Chile',v:55},{q:'camisa traje hombre precio',v:44},
+    ],
+    articles:[
+      {ttl:'Piero Butti Store: la apuesta de moda masculina italiana en Chile',src:'Fashionclick.cl',url:'https://fashionclick.cl',dt:'2025-03-10',s:'p'},
+      {ttl:'Las mejores tiendas de ropa masculina online en Chile 2025',src:'Modamagazine.lat',url:'https://modamagazine.lat',dt:'2025-03-06',s:'p'},
+      {ttl:'Ropa masculina premium accesible: marcas que están ganando espacio',src:'La Tercera Trends',url:'https://latercera.com',dt:'2025-02-22',s:'p'},
+    ],
+    bench:[
+      {nm:'Piero Butti',sc:8,c:'var(--blue)',bg:'var(--bd)',you:true},
+      {nm:'IB Store',sc:32,c:'var(--t2)',bg:'var(--s3)'},
+      {nm:'Potros',sc:22,c:'var(--t2)',bg:'var(--s4)'},
+      {nm:'Americanino',sc:20,c:'var(--t3)',bg:'var(--s4)'},
+    ],
+    benchLabel:'Moda masculina premium accesible Chile',
+    competitors:[
+      {nm:'IB Store Men',cat:'Moda masculina online CL',pr:'$$',sov:32,ig:'@ibstore.cl',risk:'h',est:'153K seguidores IG verificados · líder digital en moda masc. online CL · benchmark a superar'},
+      {nm:'Potros',cat:'Vestuario masculino CL',pr:'$$',sov:22,ig:'@potros.cl',risk:'m',est:'+40 años en Chile · casual y formal · distribución nacional · reconocimiento de marca establecido'},
+      {nm:'Americanino',cat:'Moda casual masculina',pr:'$$$',sov:20,ig:'@americanino',risk:'m',est:'Marca colombiana consolidada · Falabella · Joven y fashionable · afecta segmento 20-32'},
+      {nm:'Studio F Men',cat:'Moda formal-casual latam',pr:'$$$',sov:12,ig:'@studiof_chile',risk:'l',est:'125K IG · fuerte en moda ejecutiva · precio ligeramente superior · Colombia origin'},
+    ],
+    ins:[
+      {t:'g',txt:'<strong>Presencia activa en Falabella</strong> da distribución nacional sin costo logístico. Cada venta en el marketplace es un cliente potencial del canal propio.'},
+      {t:'a',txt:'<strong>1.2K en Instagram es el punto de partida,</strong> no el destino. IB Store tiene 153K. Con contenido editorial de calidad constante, crecer 10x en 12 meses es posible.'},
+      {t:'b',txt:'<strong>El territorio "moda masculina italiana en Chile"</strong> está disponible. Ninguna marca local lo ocupa con convicción. Es la narrativa de marca que más diferencia.'},
+      {t:'r',txt:'<strong>Sin TikTok.</strong> IB Store y Americanino dominan el canal. La ventana para entrar con contenido de calidad y narrativa diferenciada es ahora.'},
+    ],
+    eng:{labels:['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'],eng:[2.8,3.0,3.2,3.4,3.6,3.8,4.0,3.9,4.1,4.1,4.3,4.1],reach:[3,3,4,4,5,5,5,5,6,6,6,6]},
+    bkpis:[{l:'IG · handle',v:'@piero_butti',d:'confirmado',dt:'p',t:'g'},{l:'IG seguidores',v:'~1.2K',d:'en crecimiento',dt:'w',t:'a'},{l:'Falabella',v:'Activo',d:'catálogo online',dt:'p',t:'g'},{l:'Web propia',v:'pierobuttistore.cl',d:'activo',dt:'p',t:'g'},{l:'vs IB Store',v:'−152K',d:'brecha IG',dt:'n',t:'r'},{l:'TikTok',v:'Inactivo',d:'urgente activar',dt:'n',t:'r'}],
+    ai:{
+      engines:[
+        {nm:'ChatGPT',logo:'🤖',score:22,lbl:'Presencia baja',src:'gpt.com',c:'var(--amb)',bg:'var(--amd)'},
+        {nm:'Perplexity',logo:'🔭',score:30,lbl:'Resultado en queries',src:'perplexity.ai',c:'var(--blue)',bg:'var(--bd)'},
+        {nm:'Gemini',logo:'✨',score:18,lbl:'Muy baja',src:'gemini.google.com',c:'var(--t2)',bg:'var(--s3)'},
+        {nm:'Copilot',logo:'🪟',score:12,lbl:'Casi sin presencia',src:'bing.com',c:'var(--t3)',bg:'var(--s4)'},
+        {nm:'Claude',logo:'🧡',score:25,lbl:'Aparece en contexto',src:'claude.ai',c:'var(--pur)',bg:'var(--pud)'},
+      ],
+      responses:[
+        {platform:'Perplexity',logo:'🔭',q:'tienda ropa masculina premium Chile',resp:'"Piero Butti Store (pierobuttistore.cl) aparece como opción en moda masculina premium accesible en Chile..."',vol:'~120/sem',src:'perplexity.ai'},
+        {platform:'ChatGPT',logo:'🤖',q:'moda hombre Chile tienda online',resp:'ChatGPT no menciona Piero Butti de forma consistente. La marca no tiene suficiente contenido indexado. Oportunidad de contenido SEO.',vol:'~80/sem',src:'chat.openai.com'},
+      ],
+      queries:[
+        {q:'ropa masculina formal Chile online',v:88,plat:'Perplexity'},{q:'tienda hombre premium Chile',v:78,plat:'ChatGPT'},
+        {q:'moda italiana hombre Chile',v:62,plat:'Gemini'},{q:'Piero Butti ropa tienda',v:55,plat:'Perplexity'},
+        {q:'outfit formal hombre precio',v:44,plat:'ChatGPT'},
+      ],
+      social:[
+        {plat:'🎵',nm:'TikTok Search',q:'ropa masculina formal chile',vol:'6.8K búsq/sem',trend:'+42%',src:'TikTok Analytics'},
+        {plat:'📷',nm:'IG Search',q:'piero butti store',vol:'1.2K búsq/sem',trend:'+18%',src:'Instagram Insights'},
+        {plat:'🎵',nm:'TikTok Search',q:'outfit formal hombre chile',vol:'11.4K búsq/sem',trend:'+38%',src:'TikTok Analytics'},
+        {plat:'📌',nm:'Pinterest',q:'mens formal fashion chile',vol:'2.2K búsq/sem',trend:'+14%',src:'Pinterest Analytics'},
+      ],
+      overviews:[
+        {query:'tienda ropa masculina premium Chile',present:false,txt:'Piero Butti no aparece en AI Overview. IB Store y Americanino dominan el fragmento.',t:'r'},
+        {query:'moda italiana hombre Chile',present:true,txt:'Aparece en algunos resultados como referente de moda italiana accesible en Chile.',t:'g'},
+      ],
+    },
+    sl:{
+      kpis:[{l:'Menciones/sem',v:'~180',d:'estimado TLG',t:'a'},{l:'Sent. positivo',v:'72%',d:'estimado',t:'g'},{l:'Sent. negativo',v:'10%',d:'estimado',t:'g'},{l:'Cobertura',v:'IG + Fala.',d:'plataformas',t:'a'}],
+      convos:[
+        {ico:'🛒',bg:'#4CAF5022',txt:'"El traje Piero Butti que compré en Falabella llegó perfecto y la calidad es increíble para ese precio. Muy recomendado"',plat:'Falabella Reviews',s:'p',likes:'24',dt:'2025-03-17',url:'https://falabella.com/reviews/pb'},
+        {ico:'📷',bg:'#E1306C22',txt:'"Outfit de @piero_butti para la semana laboral. El pantalón chino es de lo mejor que he encontrado en Chile"',plat:'Instagram',s:'p',likes:'68',dt:'2025-03-14',url:'https://instagram.com/p/pb1'},
+        {ico:'📷',bg:'#E1306C22',txt:'"¿Alguien ha pedido en pierobuttistore.cl? ¿Cuánto demoran los despachos?"',plat:'Instagram',s:'n',likes:'22',dt:'2025-03-10',url:'https://instagram.com/p/pb2'},
+        {ico:'📘',bg:'#1877F222',txt:'"Buena ropa pero difícil de encontrar stock actualizado en la web. Esperando que mejoren"',plat:'Facebook',s:'r',likes:'15',dt:'2025-03-06',url:'https://facebook.com/posts/pb1'},
+      ],
+      topics:[{nm:'Calidad producto',vol:'68 mencs.',chg:'+22%',t:'g'},{nm:'Estilo italiano',vol:'44 mencs.',chg:'+34%',t:'g'},{nm:'Stock/disponib.',vol:'32 mencs.',chg:'+8%',t:'a'},{nm:'Precio vs calidad',vol:'28 mencs.',chg:'+12%',t:'g'},{nm:'Despacho',vol:'22 mencs.',chg:'+6%',t:'n'},{nm:'Comparación marcas',vol:'18 mencs.',chg:'+18%',t:'n'}],
+      stats:[{nm:'Plataforma top',v:'Falabella.com',t:'g'},{nm:'Sent. positivo',v:'72%',t:'g'},{nm:'CM activo',v:'Limitado',t:'a'},{nm:'Sent. neto',v:'+62pp',t:'g'},{nm:'Riesgo rep.',v:'BAJO',t:'g'},{nm:'TikTok menciones',v:'Creciendo',t:'g'}],
+      alerts:[{txt:'Stock y disponibilidad en web propia generan confusión — mejorar UX del catálogo urgente',t:'a'},{txt:'Oportunidad: creadores de contenido mencionan la marca espontáneamente — activar colaboraciones',t:'g'}],
+    },
+  },
+  vh:{
+    name:'Van Heusen',url:'vanheusen.cl',cat:'Moda formal',health:'Requiere acción',hcls:'a',
+    kpis:[
+      {l:'Instagram CL',v:'158',d:'@vanheusen.chile · real',dt:'n',t:'r',note:'Verificado · urgente crecer'},
+      {l:'Facebook global',v:'1.4M',d:'cuenta global VH',dt:'w',t:'a',note:'No exclusivo Chile'},
+      {l:'Engagement',v:'<1%',d:'estimado',dt:'n',t:'r',note:'Estimado TLG'},
+      {l:'Alcance semanal',v:'~8K',d:'−12% · est.',dt:'n',t:'r',note:'Estimado TLG'},
+      {l:'Visitas web/mes',v:'~12K',d:'−8% · est.',dt:'n',t:'r',note:'Estimado TLG'},
+      {l:'Crisis digital',v:'ACTIVA',d:'acción urgente',dt:'n',t:'r',note:'158 IG · sin CM'},
+    ],
+    sent:[52,30,18],
+    tags:['formal','clásico','reconocida','precio','calidad','tallas'],
+    channels:[
+      {ico:'📷',nm:'Instagram',hd:'@vanheusen.chile',col:'#E1306C',fol:'158',d:'verificado · crítico',dt:'n',eng:'<1%',src:'instagram.com/vanheusen.chile',src_v:true},
+      {ico:'📘',nm:'Facebook',hd:'VanHeusen.CL (global)',col:'#1877F2',fol:'1.4M',d:'cuenta global, no Chile',dt:'w',eng:'0.3%',src:'facebook.com/VanHeusen.CL',src_v:true},
+      {ico:'🌐',nm:'vanheusen.cl',hd:'Web Chile',col:'#888',fol:'~12K/mes',d:'estimado',dt:'n',eng:'—',src:null,src_v:false},
+    ],
+    traffic:{
+      stats:[{nm:'Google Search',v:'~55% tráfico',t:'a',src:'Google Analytics est.'},{nm:'Directo',v:'~26% tráfico',t:'a',src:'Analytics est.'},{nm:'Meta (IG/FB)',v:'~10% tráfico',t:'r',src:'Meta Business est.'},{nm:'Otros links',v:'~9% tráfico',t:'n',src:'Referidos varios'},{nm:'Conv. web',v:'~0.7%',t:'r',src:'Estimado TLG'}],
+      src:[{l:'Google 55%',p:55,c:'var(--blue)'},{l:'Directo 26%',p:26,c:'var(--gold)'},{l:'Meta 10%',p:10,c:'#E1306C'},{l:'Otros 9%',p:9,c:'var(--amb)'}],
+    },
+    aitrends:[
+      {q:'camisas formales hombre Chile',v:82},{q:'ropa formal masculina accesible',v:70},
+      {q:'alternativas Van Heusen Chile',v:64},{q:'Van Heusen calidad real',v:52},
+      {q:'moda ejecutiva hombre 2025',v:44},
+    ],
+    articles:[
+      {ttl:'Marcas de ropa formal masculina con poca presencia digital: el caso Van Heusen',src:'Retailnews.cl',url:'https://retailnews.cl',dt:'2025-03-16',s:'r'},
+      {ttl:'Marcas históricas que no despegan en el mundo digital chileno',src:'Fashionclick.cl',url:'https://fashionclick.cl',dt:'2025-03-09',s:'n'},
+      {ttl:'Consumidores piden más variedad de tallas y colores en ropa formal',src:'Social Listening TLG',url:'#',dt:'2025-02-25',s:'r'},
+    ],
+    bench:[
+      {nm:'Van Heusen',sc:14,c:'var(--amb)',bg:'var(--amd)',you:true},
+      {nm:'Arrow',sc:34,c:'var(--t2)',bg:'var(--s3)'},
+      {nm:'Doritex',sc:28,c:'var(--t2)',bg:'var(--s4)'},
+      {nm:'Potros',sc:16,c:'var(--t3)',bg:'var(--s4)'},
+    ],
+    benchLabel:'Moda masculina formal Chile',
+    competitors:[
+      {nm:'Arrow (mismo holding)',cat:'Camisas formales masculinas',pr:'$$',sov:34,ig:'@arrowchile',risk:'h',est:'22K IG vs 158 VH · Arrow captura la misma audiencia · riesgo de canibalización interna del holding'},
+      {nm:'Doritex',cat:'Fabricante CL camisa formal',pr:'$$',sov:28,ig:'@doritex',risk:'h',est:'Mayor actividad digital · manufactura nacional · reconocimiento creciente en segmento formal'},
+      {nm:'Potros',cat:'Vestuario masculino nacional',pr:'$$',sov:16,ig:'@potros.cl',risk:'m',est:'+40 años presencia · cobertura nacional · imagen renovada · ataca mismo target VH'},
+      {nm:'Marquis',cat:'Formal accesible',pr:'$',sov:8,ig:'—',risk:'l',est:'Precio más bajo · distribución retail masiva · amenaza en segmento costo-beneficio'},
+    ],
+    ins:[
+      {t:'r',txt:'<strong>158 seguidores en Instagram</strong> no es una métrica baja — es inexistencia digital. La marca que "no aparece" en Google/IG en 2025 no existe para la mitad de sus potenciales clientes.'},
+      {t:'r',txt:'<strong>"Alternativas a Van Heusen"</strong> ya se busca en IAs. Cuando los usuarios buscan alternatives, la marca ya perdió la batalla de consideración activa.'},
+      {t:'a',txt:'<strong>El capital de marca histórico</strong> es el activo más valioso. Una campaña "heritage + digital" puede recuperar terreno rápido si se ejecuta con consistencia.'},
+      {t:'b',txt:'<strong>Facebook global 1.4M</strong> no sirve para Chile. Crear una presencia digital local auténtica — Instagram + TikTok — es el primer paso urgente.'},
+    ],
+    eng:{labels:['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'],eng:[1.8,1.7,1.6,1.5,1.4,1.4,1.3,1.3,1.2,1.2,1.1,1.1],reach:[18,17,16,14,13,12,11,11,10,9,9,8]},
+    bkpis:[{l:'IG Chile',v:'158',d:'@vanheusen.chile · real',dt:'n',t:'r'},{l:'FB global',v:'1.4M',d:'no es cuenta Chile',dt:'w',t:'a'},{l:'vs Arrow IG',v:'−21.8K',d:'brecha crítica',dt:'n',t:'r'},{l:'Sin TikTok',v:'0',d:'oportunidad perdida',dt:'n',t:'r'},{l:'Sin CM activo',v:'—',d:'urgente activar',dt:'n',t:'r'},{l:'Riesgo',v:'ALTO',d:'acción urgente',dt:'n',t:'r'}],
+    ai:{engines:[{nm:'ChatGPT',logo:'🤖',score:18,lbl:'Muy baja',src:'gpt.com',c:'var(--t3)',bg:'var(--s4)'},{nm:'Perplexity',logo:'🔭',score:22,lbl:'Menciones negativas',src:'perplexity.ai',c:'var(--red)',bg:'var(--rd)'},{nm:'Gemini',logo:'✨',score:14,lbl:'Casi sin presencia',src:'gemini.google.com',c:'var(--t3)',bg:'var(--s4)'},{nm:'Copilot',logo:'🪟',score:10,lbl:'Sin presencia',src:'bing.com',c:'var(--t3)',bg:'var(--s5)'},{nm:'Claude',logo:'🧡',score:16,lbl:'Baja',src:'claude.ai',c:'var(--t3)',bg:'var(--s4)'}],
+    responses:[{platform:'Perplexity',logo:'🔭',q:'alternativas a Van Heusen en Chile',resp:'"Si buscas alternativas a Van Heusen, puedes considerar Arrow, Doritex o Gef que ofrecen opciones similares con mayor disponibilidad digital..."',vol:'~180/sem',src:'perplexity.ai'},{platform:'ChatGPT',logo:'🤖',q:'marcas camisas formales hombre Chile',resp:'Van Heusen aparece mencionada pero sin información actualizada. ChatGPT señala que la marca tiene "presencia limitada en canales digitales".',vol:'~90/sem',src:'chat.openai.com'}],
+    queries:[{q:'alternativas Van Heusen Chile',v:64,plat:'Perplexity'},{q:'Van Heusen calidad 2025',v:52,plat:'ChatGPT'},{q:'camisas formales similares Van Heusen',v:44,plat:'Gemini'},{q:'Van Heusen online Chile',v:38,plat:'Perplexity'}],
+    social:[{plat:'🐦',nm:'Twitter/X',q:'van heusen chile',vol:'320 mencs./sem',trend:'+2%',src:'X Analytics'},{plat:'📷',nm:'IG Search',q:'vanheusen chile',vol:'280 búsq/sem',trend:'−5%',src:'IG Insights'},{plat:'🎵',nm:'TikTok',q:'van heusen alternativa',vol:'1.8K búsq/sem',trend:'+14%',src:'TikTok Analytics'}],
+    overviews:[{query:'camisas formales hombre Chile',present:false,txt:'Van Heusen NO aparece en AI Overview. Arrow y Doritex sí. Pérdida activa de tráfico.',t:'r'},{query:'Van Heusen Chile',present:false,txt:'No hay AI Overview propio. Los resultados muestran la cuenta global, no Chile.',t:'r'}],},
+    sl:{kpis:[{l:'Menciones/sem',v:'~180',d:'estimado TLG',t:'a'},{l:'Sent. positivo',v:'52%',d:'estimado',t:'a'},{l:'Sent. negativo',v:'18%',d:'alerta',t:'r'},{l:'Sin respuesta',v:'~100%',d:'sin CM activo',t:'r'}],
+    convos:[{ico:'🐦',bg:'rgba(29,161,242,0.15)',txt:'"Van Heusen todavía existe? Pensé que había cerrado. Vi una tienda en Costanera y me sorprendí"',plat:'Twitter/X',s:'n',likes:'28',dt:'2025-03-17',url:'https://x.com/search?q=vanheusen+chile'},{ico:'📘',bg:'#1877F222',txt:'"Compré camisa VH en Ripley, buena calidad. Pero imposible encontrarlos en redes para dar feedback"',plat:'Facebook',s:'n',likes:'12',dt:'2025-03-14',url:'https://facebook.com/posts/vh1'},{ico:'📷',bg:'#E1306C22',txt:'"Busqué Van Heusen en Instagram y tienen 150 seguidores. Para una marca así es increíble"',plat:'Instagram',s:'r',likes:'44',dt:'2025-03-10',url:'https://instagram.com/p/vh1'},{ico:'📘',bg:'#1877F222',txt:'"Necesito contactar a Van Heusen para una factura. Es imposible encontrar cómo hacerlo"',plat:'Facebook',s:'r',likes:'19',dt:'2025-03-05',url:'https://facebook.com/posts/vh2'}],
+    topics:[{nm:'¿Existe la marca?',vol:'44 mencs.',chg:'+8%',t:'r'},{nm:'Servicio cliente',vol:'38 mencs.',chg:'+14%',t:'r'},{nm:'Calidad producto',vol:'32 mencs.',chg:'−4%',t:'a'},{nm:'Comparación Arrow',vol:'28 mencs.',chg:'+22%',t:'r'},{nm:'Precio',vol:'22 mencs.',chg:'+2%',t:'n'},{nm:'Disponibilidad',vol:'18 mencs.',chg:'+5%',t:'n'}],
+    stats:[{nm:'CM activo',v:'NO',t:'r'},{nm:'Tasa respuesta',v:'0%',t:'r'},{nm:'Sent. neto',v:'+34pp',t:'a'},{nm:'Riesgo rep.',v:'MEDIO-ALTO',t:'r'},{nm:'Comparac. negat.',v:'creciendo',t:'r'},{nm:'Confusión marca',v:'Alta',t:'r'}],
+    alerts:[{txt:'100% menciones sin respuesta — no hay community management activo detectado',t:'r'},{txt:'Usuarios cuestionan si la marca sigue operando — señal de baja presencia digital crítica',t:'r'},{txt:'Comparaciones con Arrow favorecen a Arrow en todos los formatos detectados',t:'a'}]},
+  },
+  dc:{
+    name:'Discount Corner',url:'discountcorner.cl',cat:'Off-price retail',health:'Crisis activa',hcls:'r',
+    kpis:[
+      {l:'Instagram',v:'~8K',d:'−3% · estimado',dt:'n',t:'r',note:'Actividad irregular'},
+      {l:'Facebook',v:'~4K',d:'estimado',dt:'n',t:'r',note:'Estimado'},
+      {l:'Menciones neg.',v:'34%',d:'+11pp · alarma',dt:'n',t:'r',note:'Estimado TLG'},
+      {l:'Engagement',v:'~0.9%',d:'muy bajo',dt:'n',t:'r',note:'Estimado TLG'},
+      {l:'Visitas web/mes',v:'~8K',d:'−18% · est.',dt:'n',t:'r',note:'Estimado'},
+      {l:'Conv. web',v:'~0.3%',d:'crítico',dt:'n',t:'r',note:'Estimado TLG'},
+    ],
+    sent:[42,24,34],
+    tags:['barato','liquidación','calidad dudosa','buenas ofertas','segunda selección'],
+    channels:[
+      {ico:'📷',nm:'Instagram',hd:'@discountcorner',col:'#E1306C',fol:'~8K',d:'−3% estimado',dt:'n',eng:'~0.9%',src:null,src_v:false},
+      {ico:'📘',nm:'Facebook',hd:'DiscountCornerCL',col:'#1877F2',fol:'~4K',d:'estimado',dt:'n',eng:'~0.5%',src:null,src_v:false},
+    ],
+    traffic:{stats:[{nm:'Google Search',v:'~44% tráfico',t:'a',src:'Analytics est.'},{nm:'Directo',v:'~32% tráfico',t:'a',src:'Analytics est.'},{nm:'Meta (social)',v:'~14% tráfico',t:'r',src:'Meta Business est.'},{nm:'Otros links',v:'~10% tráfico',t:'n',src:'Referidos'},{nm:'Conv. ecommerce',v:'~0.3%',t:'r',src:'Estimado TLG'}],
+      src:[{l:'Google 44%',p:44,c:'var(--blue)'},{l:'Directo 32%',p:32,c:'var(--gold)'},{l:'Meta 14%',p:14,c:'#E1306C'},{l:'Otros 10%',p:10,c:'var(--amb)'}]},
+    aitrends:[{q:'ropa barata de marca Chile',v:88},{q:'outlet ropa Santiago',v:77},{q:'liquidación ropa formal',v:68},{q:'segunda selección ropa',v:44},{q:'Discount Corner confiable',v:38}],
+    articles:[{ttl:'Discount Corner acumula quejas en redes por calidad de productos',src:'Twitter/X',url:'https://x.com/search?q=discount+corner+chile',dt:'2025-03-18',s:'r'},{ttl:'El segmento off-price en Chile: quién tomará el liderazgo',src:'Fashionclick.cl',url:'https://fashionclick.cl',dt:'2025-03-08',s:'n'},{ttl:'Consumidores chilenos y el mercado de segunda selección de ropa',src:'Retailnews.cl',url:'https://retailnews.cl',dt:'2025-02-20',s:'n'}],
+    bench:[{nm:'Discount Corner',sc:4,c:'var(--red)',bg:'var(--rd)',you:true},{nm:'Ripley Outlet',sc:38,c:'var(--t2)',bg:'var(--s3)'},{nm:'Paris Sale',sc:32,c:'var(--t2)',bg:'var(--s4)'},{nm:'TatiExpress',sc:16,c:'var(--t3)',bg:'var(--s4)'}],
+    benchLabel:'Off-price / outlet moda Chile',
+    competitors:[{nm:'Ripley Outlet',cat:'Retail masivo outlet Chile',pr:'$$',sov:38,ig:'@ripleychile',risk:'h',est:'Mayor confianza de marca · digital fuerte · Ripley Outlet como canal establece el estándar del segmento'},{nm:'Paris Sale',cat:'Retail masivo outlet Chile',pr:'$$',sov:32,ig:'@parisstyle',risk:'h',est:'Paris tiene la confianza del consumidor · campañas de price comunicadas bien · mejor UX digital'},{nm:'TatiExpress',cat:'Fast fashion accesible',pr:'$',sov:16,ig:'@tatiexpress',risk:'m',est:'Precio más agresivo · presencia en regiones · mismo target precio pero sin el problema de reputación DC'},{nm:'Tricot',cat:'Moda accesible nacional',pr:'$$',sov:10,ig:'@tricot.cl',risk:'l',est:'Moda accesible chilena · mejora constante en digital · posición consolidada en retail'}],
+    ins:[{t:'r',txt:'<strong>34% de menciones negativas sin respuesta</strong> es una crisis de reputación. Sin acción en 60 días el search en Google se contamina con reseñas negativas irreversibles.'},{t:'r',txt:'<strong>Ripley Outlet y Paris Sale dominan con 70% de SOV combinado.</strong> El mercado off-price existe y crece — el problema es la ejecución y reputación de DC.'},{t:'a',txt:'<strong>Oportunidad de reposicionamiento.</strong> "Smart fashion" — marca + precio justo + calidad garantizada — es un territorio sin dueño en el off-price chileno.'},{t:'b',txt:'<strong>El primer paso es simple:</strong> responder todas las menciones en 24h durante 30 días. Solo eso puede cambiar la percepción del 10% de detractores activos.'}],
+    eng:{labels:['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'],eng:[1.8,1.6,1.4,1.3,1.2,1.1,1.1,1.0,1.0,0.9,0.9,0.9],reach:[14,12,11,10,9,8,8,7,7,6,6,6]},
+    bkpis:[{l:'Posición cat.',v:'#4 / 4',d:'último del segmento',dt:'n',t:'r'},{l:'vs Ripley Out.',v:'−34pp SOV',d:'brecha crítica',dt:'n',t:'r'},{l:'Crisis rep.',v:'ACTIVA',d:'34% negativo',dt:'n',t:'r'},{l:'Conv. web',v:'~0.3%',d:'estimado',dt:'n',t:'r'},{l:'CM activo',v:'NO',d:'urgente',dt:'n',t:'r'},{l:'Crec. alcance',v:'−22%',d:'anual',dt:'n',t:'r'}],
+    ai:{engines:[{nm:'ChatGPT',logo:'🤖',score:8,lbl:'Sin presencia',src:'gpt.com',c:'var(--t3)',bg:'var(--s5)'},{nm:'Perplexity',logo:'🔭',score:12,lbl:'Menciones negativas',src:'perplexity.ai',c:'var(--red)',bg:'var(--rd)'},{nm:'Gemini',logo:'✨',score:6,lbl:'Casi nula',src:'gemini.google.com',c:'var(--t3)',bg:'var(--s5)'},{nm:'Copilot',logo:'🪟',score:5,lbl:'Nula',src:'bing.com',c:'var(--t3)',bg:'var(--s5)'},{nm:'Claude',logo:'🧡',score:10,lbl:'Muy baja',src:'claude.ai',c:'var(--t3)',bg:'var(--s5)'}],
+    responses:[{platform:'Perplexity',logo:'🔭',q:'tienda ropa barata marca Santiago',resp:'"Para ropa con descuento en Santiago, se recomienda Ripley Outlet, Paris Sale o TatiExpress antes que Discount Corner, que tiene reportes negativos recientes..."',vol:'~140/sem',src:'perplexity.ai'}],
+    queries:[{q:'outlet ropa marca Santiago',v:88,plat:'Perplexity'},{q:'ropa barata marca confiable Chile',v:77,plat:'ChatGPT'},{q:'Discount Corner confiable 2025',v:44,plat:'Perplexity'},{q:'alternativa Discount Corner Chile',v:38,plat:'ChatGPT'}],
+    social:[{plat:'🎵',nm:'TikTok',q:'discount corner chile review',vol:'1.4K mencs./sem',trend:'+22%',src:'TikTok Analytics'},{plat:'📷',nm:'IG',q:'discount corner reclamo',vol:'420 mencs./sem',trend:'+18%',src:'IG Insights'}],
+    overviews:[{query:'outlet ropa Santiago',present:false,txt:'DC no aparece. Ripley Outlet y Paris Sale dominan los AI Overviews de este query.',t:'r'},{query:'Discount Corner Chile',present:false,txt:'No hay AI Overview positivo. Los resultados incluyen reseñas negativas y foros de reclamo.',t:'r'}]},
+    sl:{kpis:[{l:'Menciones/sem',v:'~220',d:'estimado TLG',t:'r'},{l:'Sent. positivo',v:'42%',d:'estimado',t:'r'},{l:'Sent. negativo',v:'34%',d:'crisis activa',t:'r'},{l:'Sin respuesta',v:'~95%',d:'sin CM',t:'r'}],
+    convos:[{ico:'📷',bg:'#E1306C22',txt:'"Compré en Discount Corner y la camisa llegó con costura abierta. Solo me ofrecen descuento futuro como solución, inaceptable"',plat:'Instagram',s:'r',likes:'94',dt:'2025-03-18',url:'https://instagram.com/p/dc1'},{ico:'🐦',bg:'rgba(29,161,242,0.15)',txt:'"Discount Corner chile: tela horrible, no corresponde a la foto. No vuelvo más"',plat:'Twitter/X',s:'r',likes:'44',dt:'2025-03-15',url:'https://x.com/dc_review'},{ico:'📘',bg:'#1877F222',txt:'"Los precios sí están buenos. Encontré una camisa Arrow de segunda selección a mitad de precio"',plat:'Facebook',s:'p',likes:'28',dt:'2025-03-12',url:'https://facebook.com/posts/dc2'},{ico:'📷',bg:'#E1306C22',txt:'"Si uno revisa bien las prendas en tienda no hay problema. Ya he comprado 3 veces y he quedado bien"',plat:'Instagram',s:'p',likes:'18',dt:'2025-03-08',url:'https://instagram.com/p/dc3'}],
+    topics:[{nm:'Calidad deficiente',vol:'128 mencs.',chg:'+28%',t:'r'},{nm:'Problemas despacho',vol:'88 mencs.',chg:'+18%',t:'r'},{nm:'Buena oferta precio',vol:'62 mencs.',chg:'+4%',t:'g'},{nm:'Atención cliente',vol:'38 mencs.',chg:'+22%',t:'r'},{nm:'Segunda selección',vol:'32 mencs.',chg:'+6%',t:'n'},{nm:'Marca en precio bajo',vol:'44 mencs.',chg:'+8%',t:'g'}],
+    stats:[{nm:'CM activo',v:'NO',t:'r'},{nm:'Crisis activa',v:'SÍ',t:'r'},{nm:'Tasa respuesta',v:'0%',t:'r'},{nm:'Sent. neto',v:'+8pp',t:'r'},{nm:'Riesgo escalada',v:'ALTO',t:'r'},{nm:'Reviews neg. Google',v:'Creciendo',t:'r'}],
+    alerts:[{txt:'Crisis activa: contenido negativo sin respuesta en 9/10 casos — deterioro exponencial en 30 días',t:'r'},{txt:'Usuarios documentando defectos con fotos en Instagram — riesgo de contenido viral negativo',t:'r'},{txt:'Perplexity ya recomienda competidores sobre DC en queries de outlet — daño SEO activo',t:'r'}]},
+  },
+  vgs:{
+    name:'Viña Garcés Silva',url:'vgs.cl',cat:'Vino premium boutique',health:'Activa',hcls:'g',
+    kpis:[
+      {l:'Instagram',v:'15K',d:'+6% · verificado',dt:'p',t:'g',note:'@vina_garcessilva · 656 posts'},
+      {l:'Twitter/X',v:'activo',d:'@VinaGarcesSilva',dt:'p',t:'g',note:'Cuenta verificada activa'},
+      {l:'Engagement IG',v:'~3.4%',d:'sobre promedio',dt:'p',t:'g',note:'Estimado TLG · bueno para viñas'},
+      {l:'Posts IG',v:'656',d:'constante · verificado',dt:'p',t:'g',note:'656 publicaciones'},
+      {l:'Visitas web/mes',v:'~8K',d:'estimado',dt:'w',t:'a',note:'vgs.cl estimado'},
+      {l:'Exportaciones',v:'Activo',d:'EE.UU + Europa',dt:'p',t:'g',note:'Presencia internacional'},
+    ],
+    sent:[78,14,8],
+    tags:['Valle Leyda','vista al mar','Amayna','sauvignon blanc','boutique','sustentabilidad'],
+    channels:[
+      {ico:'📷',nm:'Instagram',hd:'@vina_garcessilva',col:'#9b2042',fol:'15K',d:'+6% · verificado',dt:'p',eng:'~3.4%',src:'instagram.com/vina_garcessilva',src_v:true},
+      {ico:'🐦',nm:'Twitter/X',hd:'@VinaGarcesSilva',col:'#1DA1F2',fol:'activo',d:'verificado',dt:'p',eng:'—',src:'x.com/VinaGarcesSilva',src_v:true},
+      {ico:'🍷',nm:'Wine rankings',hd:'Wine Spectator + more',col:'#722',fol:'Presente',d:'activo',dt:'p',eng:'—',src:'winespectator.com',src_v:true},
+    ],
+    traffic:{stats:[{nm:'Google Search',v:'~48% tráfico',t:'g',src:'Google Analytics est.'},{nm:'Meta (IG + Twitter)',v:'~24% tráfico',t:'g',src:'Meta Business est.'},{nm:'Directo',v:'~20% tráfico',t:'g',src:'Analytics est.'},{nm:'Referidos (ewine, lavinoteca)',v:'~8% tráfico',t:'g',src:'Referidos verificados'},{nm:'Conv. web',v:'~2.2%',t:'g',src:'Estimado TLG'}],
+      src:[{l:'Google 48%',p:48,c:'var(--blue)'},{l:'Meta 24%',p:24,c:'#9b2042'},{l:'Directo 20%',p:20,c:'var(--gold)'},{l:'Referidos 8%',p:8,c:'var(--amb)'}]},
+    aitrends:[{q:'vino sauvignon blanc Valle Leyda',v:88},{q:'viña boutique Chile premier',v:82},{q:'vinos con vista al mar Chile',v:74},{q:'Amayna vino precio',v:68},{q:'mejores viñas boutique Chile',v:62},{q:'vino premium chileno exportación',v:55}],
+    articles:[{ttl:'Viña Garcés Silva: Amayna entre los mejores SB de Latinoamérica · Wine Spectator 2025',src:'Wine Spectator',url:'https://winespectator.com',dt:'2025-03-14',s:'p'},{ttl:'Valle de Leyda, la joya vitivinícola que el mundo está descubriendo',src:'El Mercurio',url:'https://emol.com',dt:'2025-03-07',s:'p'},{ttl:'Las viñas boutique que están cambiando la imagen del vino chileno',src:'La Tercera',url:'https://latercera.com',dt:'2025-03-01',s:'p'},{ttl:'Enoturismo Chile: Garcés Silva como destino imperdible en Leyda',src:'ViajaPorChile.cl',url:'https://viajaporchile.cl',dt:'2025-02-22',s:'p'}],
+    bench:[{nm:'Garcés Silva',sc:18,c:'var(--wine)',bg:'var(--wnd)',you:true},{nm:'Casas del Bosque',sc:24,c:'var(--t2)',bg:'var(--s3)'},{nm:'Viña Leyda',sc:20,c:'var(--t2)',bg:'var(--s4)'},{nm:'Matetic',sc:16,c:'var(--t3)',bg:'var(--s4)'}],
+    benchLabel:'Vino premium boutique Valle frío Chile',
+    competitors:[
+      {nm:'Casas del Bosque',cat:'Vino premium Valle Casablanca',pr:'$$$',sov:24,ig:'@casasdelbosque',risk:'m',est:'Mayor presencia digital · fuerte en Instagram y enoturismo · referente del Valle Casablanca'},
+      {nm:'Viña Leyda',cat:'Vino Valle Leyda · mismo territorio',pr:'$$$',sov:20,ig:'@vinaleyda',risk:'h',est:'Mismo valle · mismo clima frío · competencia directa por el territorio "Valle Leyda"'},
+      {nm:'Matetic Vineyards',cat:'Vino orgánico premium CL',pr:'$$$$',sov:16,ig:'@mateticvineyards',risk:'m',est:'Orgánico · bidinámico · diferenciación por sustentabilidad · diferente precio'},
+      {nm:'Kingston Family',cat:'Vino premium Casablanca',pr:'$$$$',sov:10,ig:'@kingstonfamilyvineyards',risk:'l',est:'Boutique chileno · fuerte en exportación · segmento precio superior a VGS'},
+    ],
+    ins:[{t:'g',txt:'<strong>15K en Instagram con 656 posts</strong> es la base digital más sólida y consistente de la cartera TLG. El storytelling visual del Valle Leyda frente al mar es único.'},{t:'g',txt:'<strong>"Vinos con vista al mar · Valle Leyda"</strong> es un territorio exclusivo que ningún competidor puede replicar. Hay que radicalizarlo como eje de toda la comunicación.'},{t:'b',txt:'<strong>TikTok de enoturismo explota globalmente.</strong> Viñas de Napa, Borgoña y Toscana tienen millones de views. Garcés Silva tiene el visual más potente de Chile para este formato.'},{t:'a',txt:'<strong>Amayna difícil de encontrar</strong> en Santiago según social listening. La distribución local es la fricción más reportada. Solucionar esto activa la demanda existente.'}],
+    eng:{labels:['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'],eng:[3.0,3.1,3.3,3.2,3.4,3.5,3.4,3.6,3.8,3.7,3.9,3.8],reach:[6,6,7,7,8,8,8,9,10,10,11,11]},
+    bkpis:[{l:'Instagram',v:'15K',d:'@vina_garcessilva · real',dt:'p',t:'g'},{l:'Posts IG',v:'656',d:'consistencia real',dt:'p',t:'g'},{l:'Engagement',v:'~3.4%',d:'sobre promedio viñas',dt:'p',t:'g'},{l:'Twitter/X',v:'activo',d:'verificado',dt:'p',t:'g'},{l:'Rankings intern.',v:'Wine Spectator',d:'presente',dt:'p',t:'g'},{l:'Exportación',v:'EE.UU + EU',d:'activa',dt:'p',t:'g'}],
+    ai:{engines:[{nm:'ChatGPT',logo:'🤖',score:52,lbl:'Reconocida en categoría',src:'gpt.com',c:'var(--acid)',bg:'var(--ad)'},{nm:'Perplexity',logo:'🔭',score:68,lbl:'Bien posicionada',src:'perplexity.ai',c:'var(--blue)',bg:'var(--bd)'},{nm:'Gemini',logo:'✨',score:44,lbl:'Presente en queries',src:'gemini.google.com',c:'var(--amb)',bg:'var(--amd)'},{nm:'Copilot',logo:'🪟',score:38,lbl:'Aparece en buscadas',src:'bing.com',c:'var(--t2)',bg:'var(--s3)'},{nm:'Claude',logo:'🧡',score:55,lbl:'Fuerte presencia',src:'claude.ai',c:'var(--pur)',bg:'var(--pud)'}],
+    responses:[{platform:'Perplexity',logo:'🔭',q:'mejores viñas boutique Chile',resp:'"Viña Garcés Silva en el Valle de Leyda es reconocida como una de las más destacadas viñas boutique de Chile, famosa por sus vinos de clima frío con vista al mar..."',vol:'~420/sem',src:'perplexity.ai'},{platform:'ChatGPT',logo:'🤖',q:'vino sauvignon blanc Chile premium',resp:'"Amayna de Viña Garcés Silva (Valle Leyda) es frecuentemente citada como uno de los mejores Sauvignon Blanc de Chile, con presencia en mercados de EE.UU. y Europa..."',vol:'~280/sem',src:'chat.openai.com'},{platform:'Gemini',logo:'✨',q:'enoturismo Valle Leyda',resp:'"Garcés Silva es una visita obligada en Valle Leyda, ofreciendo una experiencia única de catas con vista al Pacífico..."',vol:'~180/sem',src:'gemini.google.com'}],
+    queries:[{q:'viña boutique Chile premier',v:88,plat:'Perplexity'},{q:'vino clima frío Chile Valle Leyda',v:82,plat:'ChatGPT'},{q:'Amayna Garcés Silva precio',v:74,plat:'Perplexity'},{q:'enoturismo Valle Leyda visita',v:62,plat:'Gemini'},{q:'mejor sauvignon blanc Chile 2025',v:58,plat:'Perplexity'}],
+    social:[{plat:'🎵',nm:'TikTok',q:'viña chile tour',vol:'12.4K búsq/sem',trend:'+44%',src:'TikTok Analytics'},{plat:'📷',nm:'IG',q:'garcessilva vino',vol:'3.2K búsq/sem',trend:'+18%',src:'IG Insights'},{plat:'📌',nm:'Pinterest',q:'chile winery visit',vol:'8.8K búsq/sem',trend:'+28%',src:'Pinterest Analytics'},{plat:'🎵',nm:'TikTok',q:'valle leyda enoturismo',vol:'4.6K búsq/sem',trend:'+62%',src:'TikTok Analytics'}],
+    overviews:[{query:'viña boutique Valle Leyda',present:true,txt:'Garcés Silva aparece en AI Overview de Google como referente del Valle Leyda.',t:'g'},{query:'sauvignon blanc Chile premier',present:true,txt:'Amayna aparece mencionada en fragmentos destacados de queries de vino premium.',t:'g'},{query:'enoturismo Chile viña',present:false,txt:'No aparece de forma consistente en queries genéricos de enoturismo. Casas del Bosque sí.',t:'a'}]},
+    sl:{kpis:[{l:'Menciones/sem',v:'~280',d:'estimado TLG',t:'g'},{l:'Sent. positivo',v:'78%',d:'estimado',t:'g'},{l:'Sent. negativo',v:'8%',d:'muy bajo',t:'g'},{l:'CM activo',v:'Sí',d:'responde en IG',t:'g'}],
+    convos:[{ico:'📷',bg:'rgba(155,32,66,0.15)',txt:'"Visité Garcés Silva el fin de semana. La vista al mar desde la cata es literalmente lo más bonito que he visto en Chile. Y el Amayna, impresionante"',plat:'Instagram',s:'p',likes:'234',dt:'2025-03-17',url:'https://instagram.com/p/vgs1'},{ico:'🐦',bg:'rgba(29,161,242,0.15)',txt:'"Amayna 2022 en una cena especial. No falla. Valle Leyda produce algo que los valles del interior no tienen, es la influencia del Pacífico"',plat:'Twitter/X',s:'p',likes:'88',dt:'2025-03-14',url:'https://x.com/vgs_review'},{ico:'📷',bg:'rgba(155,32,66,0.15)',txt:'"Regalé una caja Garcés Silva para cumpleaños y los anfitriones quedaron enamorados. Volveré a comprar"',plat:'Instagram',s:'p',likes:'62',dt:'2025-03-12',url:'https://instagram.com/p/vgs2'},{ico:'🛒',bg:'#4CAF5022',txt:'"¿Saben dónde consigo Amayna Chardonnay en Santiago? En La Vinoteca no tienen stock"',plat:'La Vinoteca',s:'n',likes:'18',dt:'2025-03-08',url:'https://lavinoteca.cl'}],
+    topics:[{nm:'Vista al mar · Valle Leyda',vol:'112 mencs.',chg:'+22%',t:'g'},{nm:'Amayna SB',vol:'94 mencs.',chg:'+18%',t:'g'},{nm:'Enoturismo visita',vol:'68 mencs.',chg:'+34%',t:'g'},{nm:'Sustentabilidad',vol:'44 mencs.',chg:'+28%',t:'g'},{nm:'Disponibilidad local',vol:'38 mencs.',chg:'+8%',t:'a'},{nm:'Precio premium',vol:'28 mencs.',chg:'+4%',t:'n'}],
+    stats:[{nm:'CM activo',v:'SÍ',t:'g'},{nm:'Sent. neto',v:'+70pp',t:'g'},{nm:'Sent. positivo',v:'78%',t:'g'},{nm:'Plataforma top',v:'Instagram',t:'g'},{nm:'Riesgo rep.',v:'MUY BAJO',t:'g'},{nm:'Export. menciones',v:'EE.UU + EU',t:'g'}],
+    alerts:[{txt:'Stock de Amayna difícil de encontrar en distribuidores Santiago — usuarios buscan y no encuentran',t:'a'},{txt:'Oportunidad TikTok enoturismo: el formato "visita a viña" explota en views · entrar ahora',t:'g'}]},
+  },
+};
+
+// ===== ALL ADS — flat array, cada ad con industry[] y kw[] =====
+// industry: moda_masculina | formal | camisa | vino | outlet | cyber | retail | casual
+const ALL_ADS=[
+  // ---- ARROW ----
+  {id:'ar1',brand:'Arrow',logo:'AR',lc:'var(--gold)',plat:'Google Search',type:'SEARCH AD',
+   headline:'Camisas Arrow Chile\nEnvío gratis',body:'+200 modelos online.',cta:'VER',
+   spend:'$400K–$800K CLP',imp:'80K–120K',dias:'60 días activo',
+   copy:'Arrow.cl | Camisas vestir desde $19.990 | Envío gratis +$39.990',
+   bg:'linear-gradient(135deg,#1a1400,#1a0e00)',ac:'var(--gold)',
+   link:'https://ads.google.com/transparency',
+   industry:['moda_masculina','formal','camisa'],
+   kw:['arrow','camisa','camisa formal','camisa vestir','camisas','formal','hombre','envío gratis']},
+
+  {id:'ar2',brand:'Arrow',logo:'AR',lc:'var(--gold)',plat:'Meta / Instagram',type:'CARRUSEL',
+   headline:'La camisa que\ndefine tu estilo',body:'Nueva colección verano.',cta:'VER COLECCIÓN',
+   spend:'$600K–$1.1M CLP',imp:'140K–240K',dias:'28 días activo',
+   copy:'Elegancia que se adapta a tu vida. Descubrí la nueva colección Arrow.',
+   bg:'linear-gradient(135deg,#1a1400,#0d0e00)',ac:'var(--gold)',
+   link:'https://www.facebook.com/ads/library',
+   industry:['moda_masculina','formal','camisa'],
+   kw:['arrow','camisa','estilo','colección','verano','moda','hombre','masculina']},
+
+  {id:'ar3',brand:'Arrow',logo:'AR',lc:'var(--gold)',plat:'TikTok Ads',type:'VIDEO',
+   headline:'Outfit de trabajo\nfin de semana',body:'Casual-formal Arrow.',cta:'COMPRAR',
+   spend:'$300K–$600K CLP',imp:'90K–160K',dias:'14 días activo',
+   copy:'De la oficina al café. Arrow tiene el look. Envío a todo Chile.',
+   bg:'linear-gradient(135deg,#1c1200,#100d00)',ac:'var(--gold)',
+   link:'https://www.facebook.com/ads/library',
+   industry:['moda_masculina','formal','camisa','casual'],
+   kw:['arrow','outfit','trabajo','casual','formal','tiktok','hombre','verano']},
+
+  // ---- VAN HEUSEN ----
+  {id:'vh1',brand:'Van Heusen',logo:'VH',lc:'var(--amb)',plat:'Meta / Facebook',type:'IMAGEN',
+   headline:'CYBER DEALS\nHasta 30% OFF',body:'Ropa formal por menos.',cta:'VER',
+   spend:'$200K–$500K CLP',imp:'40K–80K',dias:'7 días activo',
+   copy:'Vestirte bien no tiene que costarte caro. Van Heusen: hasta 30% en CYBER.',
+   bg:'linear-gradient(135deg,#1a0e00,#0d0800)',ac:'var(--amb)',
+   link:'https://www.facebook.com/ads/library',
+   industry:['moda_masculina','formal','camisa','cyber'],
+   kw:['van heusen','vanheusen','cyber','descuento','30%','formal','camisa','hombre']},
+
+  // ---- PIERO BUTTI ----
+  {id:'pb1',brand:'Piero Butti',logo:'PB',lc:'var(--blue)',plat:'Meta / Instagram',type:'IMAGEN',
+   headline:'Estilo italiano\nen Chile',body:'pierobuttistore.cl',cta:'VER COLECCIÓN',
+   spend:'$150K–$280K CLP',imp:'22K–38K',dias:'21 días activo',
+   copy:'La elegancia italiana al alcance de todos. Piero Butti Store.',
+   bg:'linear-gradient(135deg,#00112a,#000d1a)',ac:'var(--blue)',
+   link:'https://www.facebook.com/ads/library',
+   industry:['moda_masculina','formal','casual'],
+   kw:['piero butti','pierobutti','italiano','formal','casual','hombre','moda','colección']},
+
+  {id:'pb2',brand:'Piero Butti',logo:'PB',lc:'var(--blue)',plat:'Falabella Ads',type:'DISPLAY',
+   headline:'Piero Butti\nen Falabella',body:'Entrega en 24h.',cta:'COMPRAR',
+   spend:'$80K–$150K CLP',imp:'18K–32K',dias:'30 días activo',
+   copy:'Piero Butti. Ahora también en Falabella.com con entrega express.',
+   bg:'linear-gradient(135deg,#001a33,#001022)',ac:'var(--blue)',
+   link:'https://www.facebook.com/ads/library',
+   industry:['moda_masculina','formal'],
+   kw:['piero butti','falabella','delivery','entrega','masculina','formal','colección']},
+
+  // ---- DISCOUNT CORNER ----
+  {id:'dc1',brand:'Discount Corner',logo:'DC',lc:'var(--red)',plat:'Meta / Facebook',type:'IMAGEN',
+   headline:'Marcas top\nprecios reales',body:'Segunda selección oficial.',cta:'IR A TIENDA',
+   spend:'$80K–$160K CLP',imp:'12K–22K',dias:'14 días activo',
+   copy:'Arrow, Van Heusen y más. Al precio que merece.',
+   bg:'linear-gradient(135deg,#1a0000,#0d0000)',ac:'var(--red)',
+   link:'https://www.facebook.com/ads/library',
+   industry:['outlet','retail','moda_masculina'],
+   kw:['discount corner','outlet','segunda selección','descuento','marca','precio','ropa']},
+
+  // ---- GARCÉS SILVA ----
+  {id:'vgs1',brand:'Garcés Silva',logo:'GS',lc:'var(--wine)',plat:'Meta / Instagram',type:'VIDEO',
+   headline:'Amayna · Valle Leyda\nVinos con vista al mar',body:'Boutique · clima frío · Leyda.',cta:'EXPLORAR',
+   spend:'$200K–$400K CLP',imp:'28K–48K',dias:'22 días activo',
+   copy:'Un vínculo mágico con la naturaleza. Amayna. vgs.cl',
+   bg:'linear-gradient(135deg,#1a000d,#0d0008)',ac:'var(--wine)',
+   link:'https://www.facebook.com/ads/library',
+   industry:['vino'],
+   kw:['garces silva','garcés silva','amayna','vino','leyda','valle leyda','mar','boutique','premium']},
+
+  {id:'vgs2',brand:'Garcés Silva',logo:'GS',lc:'var(--wine)',plat:'Meta / Instagram',type:'CARRUSEL',
+   headline:'Enoturismo\nValor de Leyda',body:'Visita la viña.',cta:'RESERVAR',
+   spend:'$100K–$200K CLP',imp:'14K–26K',dias:'18 días activo',
+   copy:'Ven a conocer nuestra viña con vista al Pacífico. Catas únicas en Leyda.',
+   bg:'linear-gradient(135deg,#120008,#0a0005)',ac:'var(--wine)',
+   link:'https://www.facebook.com/ads/library',
+   industry:['vino'],
+   kw:['garces silva','garcés silva','enoturismo','viña','leyda','cata','vino','tour','visita']},
+
+  // ---- COMPETITORS FASHION ----
+  {id:'dx1',brand:'Doritex',logo:'DX',lc:'var(--pur)',plat:'Meta / Instagram',type:'IMAGEN',
+   headline:'Hecho en Chile\nDoritex',body:'Calidad nacional desde 1968.',cta:'CONOCER',
+   spend:'$300K–$600K CLP',imp:'70K–110K',dias:'30 días activo',
+   copy:'Doritex. Fabricada en Chile desde 1968. Calidad que se siente.',
+   bg:'linear-gradient(135deg,#0d0020,#100020)',ac:'var(--pur)',
+   link:'https://www.facebook.com/ads/library',
+   industry:['moda_masculina','formal','camisa'],
+   kw:['doritex','camisa','chile','formal','hecho en chile','calidad','hombre','vestir']},
+
+  {id:'dx2',brand:'Doritex',logo:'DX',lc:'var(--pur)',plat:'Google Search',type:'SEARCH AD',
+   headline:'Camisas Doritex Chile\nFábrica directa',body:'Calidad, precio y fit.',cta:'VER',
+   spend:'$180K–$380K CLP',imp:'40K–70K',dias:'45 días activo',
+   copy:'Doritex.cl | Camisas vestir · lino · oxford | Fabricante chileno desde 1968',
+   bg:'linear-gradient(135deg,#0d0025,#0a001a)',ac:'var(--pur)',
+   link:'https://ads.google.com/transparency',
+   industry:['moda_masculina','formal','camisa'],
+   kw:['doritex','camisa','formal','chile','fabricante','vestir','precio','hombre']},
+
+  {id:'gf1',brand:'Gef',logo:'GF',lc:'#2196F3',plat:'Meta + TikTok',type:'CARRUSEL',
+   headline:'GEF Men\nNueva temporada',body:'Casual-formal moderno.',cta:'COMPRAR',
+   spend:'$600K–$1M CLP',imp:'180K–280K',dias:'21 días activo',
+   copy:'GEF Men. El estilo que se adapta a tu vida.',
+   bg:'linear-gradient(135deg,#001433,#000d1a)',ac:'#2196F3',
+   link:'https://www.facebook.com/ads/library',
+   industry:['moda_masculina','formal','casual'],
+   kw:['gef','gef men','moda masculina','casual','formal','hombre','temporada','colombia']},
+
+  {id:'ib1',brand:'IB Store Men',logo:'IB',lc:'var(--blue)',plat:'Meta + TikTok',type:'VIDEO',
+   headline:'IB STORE\nNew Arrivals',body:'Moda masculina CL.',cta:'COMPRAR AHORA',
+   spend:'$1.2M–$2M CLP',imp:'380K–580K',dias:'35 días activo',
+   copy:'IB Store. El hombre con estilo lo compra aquí. @ibstore.cl',
+   bg:'linear-gradient(135deg,#001433,#000d1a)',ac:'var(--blue)',
+   link:'https://www.facebook.com/ads/library',
+   industry:['moda_masculina','casual'],
+   kw:['ib store','ibstore','moda masculina','hombre','estilo','new arrivals','tiktok','chile']},
+
+  {id:'pot1',brand:'Potros',logo:'PT',lc:'#6B8E23',plat:'Meta / Facebook',type:'IMAGEN',
+   headline:'Potros verano 2025\n+40 años vistiendo Chile',body:'Casual y formal.',cta:'VER',
+   spend:'$200K–$400K CLP',imp:'55K–90K',dias:'22 días activo',
+   copy:'Potros. Versátil, sentador, para cada momento. Desde 1982.',
+   bg:'linear-gradient(135deg,#0a1400,#060d00)',ac:'#6B8E23',
+   link:'https://www.facebook.com/ads/library',
+   industry:['moda_masculina','formal','casual'],
+   kw:['potros','casual','formal','chile','hombre','verano','vestir','nacional']},
+
+  // ---- COMPETITORS WINE ----
+  {id:'vl1',brand:'Viña Leyda',logo:'VL',lc:'#556B2F',plat:'Meta / Instagram',type:'IMAGEN',
+   headline:'Valle Leyda\nAl borde del Pacífico',body:'Vinos de clima frío.',cta:'DESCUBRIR',
+   spend:'$300K–$600K CLP',imp:'60K–100K',dias:'30 días activo',
+   copy:'Viña Leyda. El territorio que habla por nuestros vinos.',
+   bg:'linear-gradient(135deg,#0a1a00,#081400)',ac:'#556B2F',
+   link:'https://www.facebook.com/ads/library',
+   industry:['vino'],
+   kw:['viña leyda','vina leyda','leyda','vino','valle leyda','clima frio','sauvignon blanc']},
+
+  {id:'cb1',brand:'Casas del Bosque',logo:'CB',lc:'#8B7355',plat:'Meta + Google',type:'CARRUSEL',
+   headline:'Valle Casablanca\nVinos de altura',body:'Premium boutique chileno.',cta:'VISITAR',
+   spend:'$400K–$700K CLP',imp:'68K–112K',dias:'18 días activo',
+   copy:'Casas del Bosque. El terruño que marca la diferencia.',
+   bg:'linear-gradient(135deg,#0a1200,#080d00)',ac:'#8B7355',
+   link:'https://www.facebook.com/ads/library',
+   industry:['vino'],
+   kw:['casas del bosque','vino','casablanca','boutique','premium','chileno','sauvignon blanc']},
+
+  {id:'mt1',brand:'Matetic',logo:'MT',lc:'#6B4226',plat:'Meta / Instagram',type:'VIDEO',
+   headline:'Matetic Organic\nVinos del alma',body:'Biodinámica · Valle Rosario.',cta:'EXPLORAR',
+   spend:'$150K–$300K CLP',imp:'22K–38K',dias:'25 días activo',
+   copy:'Matetic. Donde la tierra y el vino se fusionan. Vinos orgánicos de Chile.',
+   bg:'linear-gradient(135deg,#150a00,#0d0600)',ac:'#6B4226',
+   link:'https://www.facebook.com/ads/library',
+   industry:['vino'],
+   kw:['matetic','vino','organico','biodynamic','premium','boutique','chile']},
+
+  // ---- COMPETITORS OUTLET ----
+  {id:'ro1',brand:'Ripley Outlet',logo:'RO',lc:'#e91e8c',plat:'Meta + TikTok',type:'VIDEO',
+   headline:'OUTLET RIPLEY\nPrecio real',body:'Descuentos permanentes.',cta:'IR AL OUTLET',
+   spend:'$2M–$4M CLP',imp:'620K–980K',dias:'Continuo',
+   copy:'Ripley Outlet. Precios que sí tienen sentido. Moda de marca a precio outlet.',
+   bg:'linear-gradient(135deg,#1a001a,#0d000d)',ac:'#e91e8c',
+   link:'https://www.facebook.com/ads/library',
+   industry:['outlet','retail'],
+   kw:['ripley','outlet','descuento','precio','moda','ropa','barato','liquidación','retail']},
+
+  {id:'ps1',brand:'Paris Sale',logo:'PS',lc:'#ff6b35',plat:'Meta + Google',type:'BANNER',
+   headline:'PARIS SALE\nHasta −50%',body:'Moda con descuento real.',cta:'VER TODO',
+   spend:'$3M–$5M CLP',imp:'900K–1.4M',dias:'14 días activo',
+   copy:'Paris Sale. Los mejores descuentos en moda. Hasta −50% en ropa y más.',
+   bg:'linear-gradient(135deg,#1a0800,#1a0200)',ac:'#ff6b35',
+   link:'https://www.facebook.com/ads/library',
+   industry:['outlet','retail'],
+   kw:['paris','sale','outlet','descuento','50%','moda','ropa','precio','oferta']},
+
+  {id:'tt1',brand:'TatiExpress',logo:'TE',lc:'#FF9800',plat:'Meta / Facebook',type:'IMAGEN',
+   headline:'TatiExpress\nModa al precio justo',body:'Siempre hay descuento.',cta:'COMPRAR',
+   spend:'$400K–$700K CLP',imp:'80K–140K',dias:'Continuo',
+   copy:'TatiExpress. Moda que sí alcanza. Precio justo todos los días.',
+   bg:'linear-gradient(135deg,#1a0e00,#120800)',ac:'#FF9800',
+   link:'https://www.facebook.com/ads/library',
+   industry:['outlet','retail'],
+   kw:['tatiexpress','tati','outlet','descuento','moda','precio','barato','accesible']},
+
+  // ---- CYBER ----
+  {id:'cy1',brand:'Arrow',logo:'AR',lc:'var(--gold)',plat:'Meta / Instagram',type:'VIDEO',
+   headline:'CYBER MONDAY\n−40% toda la col.',body:'Solo 48 horas. Envío gratis.',cta:'COMPRAR YA',
+   spend:'$800K–$1.5M CLP',imp:'180K–280K',dias:'3 días activo',
+   copy:'La camisa que necesitás para el verano. CYBER: −40%. Solo 48 hs. arrowchile.cl',
+   bg:'linear-gradient(135deg,#1a1400,#0d0d00)',ac:'var(--gold)',
+   link:'https://www.facebook.com/ads/library',
+   industry:['moda_masculina','formal','camisa','cyber'],
+   kw:['cyber','cyber monday','arrow','camisa','40%','descuento','oferta','verano']},
+
+  {id:'cy2',brand:'Falabella',logo:'FA',lc:'#4CAF50',plat:'Meta + Google',type:'CARRUSEL',
+   headline:'CYBER BESTIAL\nMarca a marca',body:'Los mejores precios del año.',cta:'EXPLORAR',
+   spend:'$8M–$15M CLP',imp:'2M–3.4M',dias:'5 días activo',
+   copy:'CYBER BESTIAL en Falabella. Todo con descuento. Arrow, GEF, Potros y más.',
+   bg:'linear-gradient(135deg,#0a2400,#002400)',ac:'#4CAF50',
+   link:'https://www.facebook.com/ads/library',
+   industry:['retail','moda_masculina','cyber'],
+   kw:['cyber','cyber monday','falabella','descuento','moda','ropa','electro','precio','bestial']},
+
+  {id:'cy3',brand:'Ripley',logo:'RI',lc:'#e91e8c',plat:'TikTok + Meta',type:'VIDEO',
+   headline:'CYBER RIPLEY\n¡Ya llegó!',body:'Moda y electro.',cta:'COMPRA YA',
+   spend:'$3M–$6M CLP',imp:'800K–1.2M',dias:'4 días activo',
+   copy:'CYBER RIPLEY ¡YA! Stock limitado. La moda más buscada al mejor precio.',
+   bg:'linear-gradient(135deg,#1a001a,#0d000d)',ac:'#e91e8c',
+   link:'https://www.facebook.com/ads/library',
+   industry:['retail','moda_masculina','cyber'],
+   kw:['cyber','ripley','descuento','moda','oferta','tiktok','stock','precio']},
+
+  {id:'cy4',brand:'Paris',logo:'PA',lc:'#ff6b35',plat:'Google Display',type:'BANNER',
+   headline:'CYBER PARIS\nDescuentos reales',body:'Moda y electro hasta −50%.',cta:'VER TODO',
+   spend:'$5M–$9M CLP',imp:'1.8M–2.6M',dias:'6 días activo',
+   copy:'CYBER PARIS. Los descuentos que esperabas. Moda, deco y más.',
+   bg:'linear-gradient(135deg,#1a0800,#1a0000)',ac:'#ff6b35',
+   link:'https://www.facebook.com/ads/library',
+   industry:['retail','cyber'],
+   kw:['cyber','paris','descuento','50%','moda','ropa','electro','oferta','precio']},
+
+  // ---- SUMMER / SEASONAL ----
+  {id:'sv1',brand:'Zara',logo:'ZR',lc:'#999',plat:'Meta / Instagram',type:'CARRUSEL',
+   headline:'Zara Man\nSummer 2025',body:'Nueva colección llegó.',cta:'COMPRAR',
+   spend:'$1.5M–$2.5M CLP',imp:'320K–480K',dias:'21 días activo',
+   copy:'Zara Man. La moda que llega primero. Colección verano en tiendas y zara.com/cl',
+   bg:'linear-gradient(135deg,#1a1a1a,#111111)',ac:'#ccc',
+   link:'https://www.facebook.com/ads/library',
+   industry:['moda_masculina','casual'],
+   kw:['zara','zara man','moda','verano','colección','hombre','fashion','masculina']},
+
+  {id:'sv2',brand:'IB Store Men',logo:'IB',lc:'var(--blue)',plat:'TikTok',type:'VIDEO',
+   headline:'Verano IB\nLook de playa',body:'Ropa de verano masculina.',cta:'VER',
+   spend:'$400K–$700K CLP',imp:'120K–200K',dias:'18 días activo',
+   copy:'El verano se viste con IB Store. Outfits de playa y ciudad. @ibstore.cl',
+   bg:'linear-gradient(135deg,#001433,#000d22)',ac:'var(--blue)',
+   link:'https://www.facebook.com/ads/library',
+   industry:['moda_masculina','casual'],
+   kw:['ib store','verano','playa','outfit','casual','tiktok','moda','hombre','masculina']},
+];
+
+// industry per brand key
+const BRAND_INDUSTRY={
+  arrow:['moda_masculina','formal','camisa'],
+  pb:['moda_masculina','formal'],
+  vh:['moda_masculina','formal','camisa'],
+  dc:['outlet','retail'],
+  vgs:['vino'],
+};
+
+// AI TOOLS DATA
+const AI_TOOLS=[
+  {nm:'Perplexity AI',cat:'AI Search Engine',use:'Monitorear cómo responde la IA sobre tu marca y categoría. Muy útil para ver queries de competidores.',score:94,link:'perplexity.ai',free:true},
+  {nm:'Brand24',cat:'Social + AI Monitoring',use:'Escucha social en tiempo real con análisis de sentimiento AI. Más completo para marcas latinoamericanas.',score:88,link:'brand24.com',free:false},
+  {nm:'SparkToro',cat:'Audience Research AI',use:'Descubrir dónde está tu audiencia en internet · podcasts, webs, redes sociales. Ideal para media planning.',score:82,link:'sparktoro.com',free:false},
+  {nm:'Mention',cat:'Social Listening AI',use:'Alertas en tiempo real · sentiment AI · coverage en medios digitales. Precio accesible para agencias.',score:80,link:'mention.com',free:false},
+  {nm:'ChatGPT + Custom GPT',cat:'Análisis estratégico',use:'Crear GPTs personalizados para analizar brand mentions, generar reportes y crear contenido de marca.',score:86,link:'chat.openai.com',free:true},
+  {nm:'Semrush AI',cat:'SEO + Content AI',use:'Monitorear rankings en Google, keywords de competidores y oportunidades de contenido para AI search.',score:85,link:'semrush.com',free:false},
+];
+
+// ===== KEYWORD STATE =====
+let activeKeywords=[];    // array of strings
+let kwSearchMode='ANY';   // 'ANY' | 'ALL'
+
+const KW_SUGGESTIONS_POOL=[
+  'camisa','camisa formal','camisa vestir','camisa lino','camisa manga corta',
+  'formal','casual','moda masculina','hombre','outfit','trabajo','verano','otoño',
+  'vino','vino premium','Amayna','Valle Leyda','sauvignon blanc','enoturismo','viña',
+  'CYBER','CYBER MONDAY','descuento','outlet','segunda selección','liquidación',
+  'Arrow','Doritex','IB Store','Potros','Gef','Ripley Outlet','Paris Sale',
+  'envío gratis','30%','40%','50%','colección nueva','italiano','boutique',
+];
+
+// ===== PERSISTENT STORAGE =====
+let storeTimer=null;
+function showStoreInd(state,msg){
+  const el=document.getElementById('store-ind');
+  if(!el)return;
+  el.className='store-ind show '+state;
+  el.textContent='● '+msg;
+  clearTimeout(storeTimer);
+  storeTimer=setTimeout(()=>{el.classList.remove('show');},2200);
+}
+
+function saveState(){
+  const state={cur,activeKeywords,kwSearchMode,hiddenBrands:Array.from(hiddenBrands),customBenchCompetitors};
+  try{
+    showStoreInd('saving','Guardando…');
+    localStorage.setItem('bp_state',JSON.stringify(state));
+    showStoreInd('ok','Guardado ✓');
+  }catch(e){showStoreInd('err','Error al guardar');}
+}
+
+function loadState(){
+  return new Promise(resolve=>{
+    try{
+      const raw=localStorage.getItem('bp_state');
+      if(raw){
+        const s=JSON.parse(raw);
+        if(s.cur&&DB[s.cur])cur=s.cur;
+        if(Array.isArray(s.activeKeywords))activeKeywords=s.activeKeywords;
+        if(s.kwSearchMode)kwSearchMode=s.kwSearchMode;
+        if(Array.isArray(s.hiddenBrands))hiddenBrands=new Set(s.hiddenBrands);
+        if(s.customBenchCompetitors)customBenchCompetitors=s.customBenchCompetitors;
+      }
+    }catch(e){}
+    resolve();
+  });
+}
+
+// ===== KEYWORD CHIP ENGINE =====
+function kwKeydown(e){
+  if(e.key==='Enter'){e.preventDefault();addKwFromInput();}
+  if(e.key==='Escape'){document.getElementById('kw-sug').classList.remove('open');}
+}
+
+function addKwFromInput(){
+  const inp=document.getElementById('kw-inp');
+  const raw=inp.value.trim();
+  if(!raw)return;
+  // support comma or semicolon separated
+  const parts=raw.split(/[,;]+/).map(s=>s.trim()).filter(Boolean);
+  parts.forEach(p=>addKw(p));
+  inp.value='';
+  document.getElementById('kw-sug').classList.remove('open');
+}
+
+function addKw(kw){
+  const k=kw.trim();
+  if(!k||activeKeywords.includes(k))return;
+  activeKeywords.push(k);
+  renderChips();
+  applyAdsFilter();
+  saveState();
+}
+
+function removeKw(kw){
+  const el=document.querySelector(`.kw-chip[data-kw="${CSS.escape(kw)}"]`);
+  if(el){el.classList.add('removing');setTimeout(()=>{activeKeywords=activeKeywords.filter(k=>k!==kw);renderChips();applyAdsFilter();saveState();},160);}
+  else{activeKeywords=activeKeywords.filter(k=>k!==kw);renderChips();applyAdsFilter();saveState();}
+}
+
+function clearAllKw(){
+  activeKeywords=[];
+  renderChips();
+  applyAdsFilter();
+  saveState();
+}
+
+function setMode(mode){
+  kwSearchMode=mode;
+  document.getElementById('mode-any').classList.toggle('on',mode==='ANY');
+  document.getElementById('mode-all').classList.toggle('on',mode==='ALL');
+  applyAdsFilter();
+  saveState();
+}
+
+function renderChips(){
+  const wrap=document.getElementById('kw-chips');
+  const empty=document.getElementById('kw-empty-msg');
+  const label=document.getElementById('kw-count-label');
+  if(!activeKeywords.length){
+    wrap.innerHTML='';
+    if(empty)empty.style.display='';
+    if(label)label.textContent='Sin keywords · mostrando top industria';
+    wrap.appendChild(empty||document.createElement('span'));
+    return;
+  }
+  if(empty)empty.style.display='none';
+  if(label)label.textContent=`${activeKeywords.length} keyword${activeKeywords.length>1?'s':''} activa${activeKeywords.length>1?'s':''} · modo ${kwSearchMode==='ANY'?'CUALQUIERA':'TODAS'}`;
+  wrap.innerHTML=activeKeywords.map(k=>`<span class="kw-chip" data-kw="${k}">${k}<span class="kw-chip-x" onclick="removeKw('${k.replace(/'/g,"\\'")}')">×</span></span>`).join('');
+}
+
+function kwSuggest(val){
+  const sug=document.getElementById('kw-sug');
+  if(!val||val.length<2){sug.classList.remove('open');return;}
+  const lv=val.toLowerCase();
+  const matches=KW_SUGGESTIONS_POOL.filter(s=>s.toLowerCase().includes(lv)&&!activeKeywords.includes(s)).slice(0,8);
+  if(!matches.length){sug.classList.remove('open');return;}
+  sug.innerHTML=matches.map(m=>`<div class="kw-sug-item" onclick="document.getElementById('kw-inp').value='${m}';kwSuggest('');addKwFromInput()">${m}</div>`).join('');
+  sug.classList.add('open');
+}
+document.addEventListener('click',e=>{if(!e.target.closest('.kw-suggestions'))document.getElementById('kw-sug')?.classList.remove('open');});
+
+// ===== AD FILTER ENGINE =====
+function adMatchesKeywords(ad,keywords,mode){
+  const haystack=[...(ad.kw||[]),ad.brand,ad.headline,ad.copy,ad.type,...(ad.industry||[])].join(' ').toLowerCase();
+  if(mode==='ALL'){return keywords.every(k=>haystack.includes(k.toLowerCase()));}
+  return keywords.some(k=>haystack.includes(k.toLowerCase()));
+}
+
+function applyAdsFilter(){
+  const grid=document.getElementById('ads-grid');
+  const resTxt=document.getElementById('ads-res-txt');
+  const load=document.getElementById('ads-loading');
+  if(!grid)return;
+
+  load.style.display='block';grid.innerHTML='';
+  setTimeout(()=>{
+    load.style.display='none';
+    const brandInd=BRAND_INDUSTRY[cur]||['moda_masculina'];
+    let results;
+
+    if(!activeKeywords.length){
+      // No keywords: show top ads of current brand's industry
+      results=ALL_ADS.filter(ad=>ad.industry.some(i=>brandInd.includes(i)));
+      if(resTxt)resTxt.innerHTML=`<span style="color:var(--acid)">${results.length}</span> anuncios activos · industria <b>${DB[cur]?.cat||cur}</b> · Sin keywords, mostrando top relevantes`;
+    } else {
+      results=ALL_ADS.filter(ad=>adMatchesKeywords(ad,activeKeywords,kwSearchMode));
+      const kwHtml=activeKeywords.map(k=>`<span class="kw-matched-pill">${k}</span>`).join('');
+      if(resTxt)resTxt.innerHTML=`<span style="color:var(--acid)">${results.length}</span> anuncios encontrados · ${kwHtml} · modo ${kwSearchMode==='ANY'?'CUALQUIERA':'TODAS'}`;
+    }
+
+    if(!results.length){
+      grid.innerHTML=`<div style="grid-column:1/-1"><div class="empty2"><div style="font-size:24px;opacity:0.4;margin-bottom:8px">🎯</div>Sin anuncios activos para los keywords seleccionados.<br><span style="font-size:10px;color:var(--t3)">Probá cambiar a modo CUALQUIERA, o eliminar algún keyword.</span></div></div>`;
+      return;
+    }
+
+    // Group by brand for better reading
+    const byBrand={};
+    results.forEach(ad=>{if(!byBrand[ad.brand])byBrand[ad.brand]=[];byBrand[ad.brand].push(ad);});
+    let html='';
+    Object.entries(byBrand).forEach(([brand,ads])=>{
+      const isMine=ads[0].brand===DB[cur]?.name;
+      html+=`<div style="grid-column:1/-1"><div class="ads-industry-label">${isMine?'⭑ TU MARCA · ':''}${brand} · ${ads.length} anuncio${ads.length>1?'s':''} activo${ads.length>1?'s':''}</div></div>`;
+      html+=ads.map(ad=>buildAd(ad)).join('');
+    });
+    grid.innerHTML=html;
+  },400);
+}
+
+// Legacy qs helper (for any remaining refs)
+function qs(q){addKw(q);showTab('ads',null);document.querySelectorAll('.tab').forEach((t,i)=>{t.classList.remove('on');if(i===3)t.classList.add('on');});}
+function searchAds(){const v=document.getElementById('kw-inp')?.value?.trim();if(v)addKwFromInput();}
+
+// ===== BUILD AD CARD =====
+function buildAd(ad){
+  const isMyBrand=DB[cur]&&ad.brand===DB[cur].name;
+  const matchedKw=activeKeywords.length?activeKeywords.filter(k=>{
+    const h=[...(ad.kw||[]),ad.brand,ad.headline,ad.copy].join(' ').toLowerCase();
+    return h.includes(k.toLowerCase());
+  }):[];
+  return`<div class="adc">
+    <div class="ad-cre" style="background:${ad.bg}">
+      <div class="ad-type">${ad.type}</div>
+      <div class="ad-act">● ACTIVO</div>
+      <div class="ad-mock">
+        <div class="ad-chip2" style="background:${ad.lc}22;color:${ad.lc};border:1px solid ${ad.lc}44">${ad.logo}</div>
+        <div class="ad-hl" style="color:${ad.ac}">${ad.headline.replace('\n','<br>')}</div>
+        <div class="ad-bd2">${ad.body}</div>
+        <div class="ad-cta2" style="background:${ad.lc};color:#060709">${ad.cta}</div>
+      </div>
+    </div>
+    <div class="ad-info2">
+      <div class="ad-brow">
+        <div class="ad-blogo" style="background:${ad.lc}22;color:${ad.lc}">${ad.logo}</div>
+        <div style="flex:1"><div class="ad-bn">${ad.brand}</div><div class="ad-plat">${ad.plat}</div></div>
+        ${isMyBrand?'<span class="mtag">TU MARCA</span>':''}
+      </div>
+      ${matchedKw.length?`<div style="display:flex;flex-wrap:wrap;gap:3px;margin-bottom:6px">${matchedKw.map(k=>`<span class="kw-matched-pill">${k}</span>`).join('')}</div>`:''}
+      <div class="ad-copy2">${ad.copy}</div>
+      <div class="ad-stats2">
+        <div><div class="ad-sv" style="color:var(--acid)">${ad.spend}</div><div class="ad-sl">Inversión est.</div></div>
+        <div><div class="ad-sv">${ad.imp}</div><div class="ad-sl">Impresiones</div></div>
+        <div><div class="ad-sv" style="color:var(--amb)">${ad.dias}</div><div class="ad-sl">Estado</div></div>
+      </div>
+    </div>
+    <div class="ad-ft2">
+      <span class="ad-dt" style="color:var(--t3)">${ad.plat}</span>
+      <a href="${ad.link}" target="_blank" class="adlink">↗ Ver en biblioteca</a>
+    </div>
+  </div>`;
+}
+
+// ===== RENDER ENGINE =====
+function render(){
+  const d=DB[cur];
+  document.getElementById('hbn').textContent=d.name;
+  document.getElementById('hbh').textContent=d.health;
+  document.getElementById('hbh').className='hpp '+d.hcls;
+  document.getElementById('hburl').textContent=d.url;
+  document.getElementById('sl-nm').textContent=d.name;
+  document.getElementById('ais-nm').textContent=d.name;
+  document.getElementById('bench-lbl').textContent=d.benchLabel||'Categoría';
+
+  renderKPIs(d.kpis,'kpi-row');
+  renderKPIs(d.bkpis||d.kpis,'bkpi-row');
+  renderSent(d.sent);renderTags(d.tags);renderChs(d.channels);renderTf(d.traffic);
+  renderAI(d.aitrends);renderArts(d.articles);renderIns(d.ins);renderEngChart(d.eng);
+  renderBench(d.bench);renderBenchCharts(d.bench);renderCompDetail(d.competitors||[]);
+  renderSL(d.sl||{});renderAIS(d.ai||{});
+}
+
+function renderKPIs(kpis,id){
+  document.getElementById(id).innerHTML=kpis.map(k=>`
+    <div class="kpi ${k.t}">
+      <div class="kl">${k.l}</div><div class="kv">${k.v}</div>
+      <div class="kd ${k.dt==='p'?'dp':k.dt==='n'?'dn':'dw'}">${k.dt==='p'?'↑':k.dt==='n'?'↓':'→'} ${k.d}</div>
+      ${k.note?`<div style="font-size:8px;color:var(--t3);font-family:'JetBrains Mono',monospace;margin-top:2px">${k.note}</div>`:''}
+    </div>`).join('');
+}
+
+function renderSent(d){
+  const cv=document.getElementById('sentChart');
+  if(ch.sent)ch.sent.destroy();
+  ch.sent=new Chart(cv,{type:'doughnut',data:{datasets:[{data:d,backgroundColor:['rgba(0,224,154,0.85)','rgba(72,77,92,0.4)','rgba(240,64,64,0.75)'],borderWidth:0}]},options:{cutout:'74%',plugins:{legend:{display:false},tooltip:{enabled:false}},maintainAspectRatio:true}});
+  document.getElementById('spct').textContent=d[0]+'%';
+  document.getElementById('sent-bd').innerHTML=[{l:'Positivo',v:d[0],c:'var(--acid)'},{l:'Neutral',v:d[1],c:'var(--t3)'},{l:'Negativo',v:d[2],c:'var(--red)'}].map(r=>`<div class="srow"><span class="snl2">${r.l}</span><div class="sbw"><div class="sbf" style="width:${r.v}%;background:${r.c}"></div></div><span class="sv">${r.v}%</span></div>`).join('');
+}
+
+function renderTags(tags){
+  const cs=[['rgba(0,224,154,0.1)','var(--acid)'],['rgba(64,128,240,0.1)','var(--blue)'],['rgba(200,164,90,0.1)','var(--gold)']];
+  document.getElementById('tags-wrap').innerHTML=tags.map((t,i)=>{const[bg,c]=cs[i%3];return`<span class="tag2" style="background:${bg};color:${c}">${t}</span>`}).join('');
+}
+
+function renderChs(chs){
+  const dc={p:'var(--acid)',n:'var(--red)',w:'var(--amb)'};
+  document.getElementById('chs-wrap').innerHTML=chs.map(c=>`
+    <div class="chr">
+      <div class="chi" style="background:${c.col}22;color:${c.col}">${c.ico}</div>
+      <div style="flex:1;min-width:0"><div class="chn">${c.nm}</div><div class="chs">${c.hd}</div></div>
+      <div style="text-align:right">
+        <div class="chmv" style="color:${dc[c.dt]}">${c.fol}</div>
+        <div class="chmd" style="color:${dc[c.dt]}">${c.d} · ${c.eng}</div>
+        ${c.src_v?`<a href="https://${c.src}" target="_blank" class="ch-src">↗ ${c.src}</a>`:c.src?`<span class="ch-src">⚠ No verificado</span>`:'<span class="ch-src">⚠ Estimado</span>'}
+      </div>
+    </div>`).join('');
+}
+
+function renderTf(tf){
+  const tc={g:'var(--acid)',r:'var(--red)',a:'var(--amb)',n:'var(--t2)'};
+  document.getElementById('tf-wrap').innerHTML=
+    tf.stats.map(s=>`<div class="tfr"><div><span class="tfn">${s.nm}</span>${s.src?`<div class="tfsrc">Fuente: ${s.src}</div>`:''}</div><span class="tfv" style="color:${tc[s.t]}">${s.v}</span></div>`).join('')+
+    '<div style="margin-top:8px;padding-top:7px;border-top:1px solid var(--b1)"><div class="seclbl">Distribución de tráfico</div>'+
+    tf.src.map(s=>`<div style="display:flex;align-items:center;gap:6px;margin-bottom:3px"><div style="width:${s.p*1.4}px;height:2px;background:${s.c};border-radius:1px"></div><span style="font-size:10px;color:var(--t2)">${s.l}</span></div>`).join('')+'</div>';
+}
+
+function renderAI(trs){
+  document.getElementById('aitr-wrap')?document.getElementById('aitr-wrap').innerHTML=trs.map((t,i)=>`<div class="tri"><span class="trn2">${String(i+1).padStart(2,'0')}</span><span class="trq">${t.q}</span><div class="trb"><div class="trbf" style="width:${t.v}%"></div></div><span class="trv">${t.v}</span></div>`).join(''):null;
+}
+
+function renderArts(arts){
+  const sc={p:'var(--acid)',r:'var(--red)',n:'var(--amb)'};
+  const sw={p:'var(--ad)',r:'var(--rd)',n:'var(--amd)'};
+  const sl={p:'positivo',r:'negativo',n:'neutral'};
+  const sorted=[...arts].sort((a,b)=>new Date(b.dt)-new Date(a.dt));
+  document.getElementById('art-wrap').innerHTML=sorted.map(a=>`
+    <div class="art"><div class="adot" style="background:${sc[a.s]}"></div>
+    <div style="flex:1;min-width:0">
+      <div class="attl">${a.ttl}</div>
+      <div class="amet">
+        <a href="${a.url}" target="_blank" class="asrc">↗ ${a.src}</a>
+        <span class="adate">${a.dt}</span>
+        <span class="asp" style="background:${sw[a.s]};color:${sc[a.s]}">${sl[a.s]}</span>
+      </div>
+    </div></div>`).join('');
+}
+
+function renderIns(ins){
+  const insHtml=ins.map(i=>`<div class="ins ${i.t}"><div class="idot" style="background:${i.t==='g'?'var(--acid)':i.t==='a'?'var(--amb)':i.t==='r'?'var(--red)':'var(--blue)'}"></div><div class="itxt">${i.txt}</div></div>`).join('');
+  document.getElementById('ins-wrap').innerHTML=`<div style="grid-column:1/-1">${insHtml}</div>`;
+}
+
+function renderEngChart(data){
+  const cv=document.getElementById('engChart');
+  if(ch.eng)ch.eng.destroy();
+  const ctx=cv.getContext('2d');const g=ctx.createLinearGradient(0,0,0,160);
+  g.addColorStop(0,'rgba(0,224,154,0.18)');g.addColorStop(1,'rgba(0,224,154,0)');
+  ch.eng=new Chart(cv,{type:'line',data:{labels:data.labels,datasets:[
+    {label:'Eng %',data:data.eng,borderColor:'rgba(0,224,154,0.9)',backgroundColor:g,fill:true,tension:0.4,pointRadius:2,yAxisID:'y'},
+    {label:'Alcance K',data:data.reach,borderColor:'rgba(64,128,240,0.8)',backgroundColor:'transparent',fill:false,tension:0.4,pointRadius:2,yAxisID:'y1',borderDash:[4,3]},
+  ]},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{display:false},tooltip:{backgroundColor:'#111318',borderColor:'rgba(255,255,255,0.07)',borderWidth:1,titleColor:'#8c91a0',bodyColor:'#f0f2f5',padding:7}},scales:{x:{grid:{color:'rgba(255,255,255,0.03)'},ticks:{color:'#484d5c',font:{size:9}}},y:{position:'left',grid:{color:'rgba(255,255,255,0.03)'},ticks:{color:'#484d5c',font:{size:9},callback:v=>v.toFixed(1)+'%'}},y1:{position:'right',grid:{drawOnChartArea:false},ticks:{color:'#484d5c',font:{size:9},callback:v=>v+'K'}}}}});
+}
+
+function renderBench(bench){
+  const allBench=[...bench,...(customBenchCompetitors[cur]||[])];
+  document.getElementById('bench-brands').innerHTML=allBench.map(b=>`
+    <div class="bb ${b.you?'you':''}" style="${b.you?`border-color:${b.c}`:''}">
+      <div class="bbn">${b.nm}${b.you?' ✦':''}</div><div class="bbs" style="color:${b.c}">${b.sc}%</div><div class="bbl">SOV estimado</div>
+    </div>`).join('');
+  document.getElementById('sov-bar').innerHTML=allBench.map(b=>`<div class="sovs" style="flex:${b.sc};background:${b.bg};color:${b.c}" title="${b.nm}: ${b.sc}%">${b.sc>8?b.sc+'%':''}</div>`).join('');
+}
+
+function renderBenchCharts(bench){
+  const cats=['Engagement','Alcance','Sentim.','SEO','Conv.','Presencia'];
+  const rc=document.getElementById('radarChart');
+  if(ch.radar)ch.radar.destroy();
+  ch.radar=new Chart(rc,{type:'radar',data:{labels:cats,datasets:bench.slice(0,2).map((b,i)=>({label:b.nm,data:i===0?[75,70,68,65,60,80]:[52,58,48,60,42,65],borderColor:i===0?resolveColor(b.c,0.8):'rgba(64,128,240,0.6)',backgroundColor:i===0?resolveColor(b.c,0.1):'rgba(64,128,240,0.05)',pointBackgroundColor:i===0?resolveColor(b.c,1):'#4080f0',pointRadius:2.5,borderWidth:1.5}))},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,labels:{color:'#8c91a0',font:{size:9},boxWidth:8,padding:6}},tooltip:{backgroundColor:'#111318',bodyColor:'#f0f2f5'}},scales:{r:{grid:{color:'rgba(255,255,255,0.05)'},angleLines:{color:'rgba(255,255,255,0.05)'},ticks:{display:false},pointLabels:{color:'#484d5c',font:{size:9}}}}}});
+
+  ['scc','ecc','wcc'].forEach(id=>{if(ch[id])ch[id].destroy()});
+  const bnames=bench.map(b=>b.nm);const bcolors=bench.map(b=>resolveColor(b.c,0.7));
+  ch.scc=new Chart(document.getElementById('scc'),{type:'bar',data:{labels:bnames,datasets:[{data:bench.map((_,i)=>[DB[cur].sent[0],65,52,42][i]||50),backgroundColor:bcolors}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{backgroundColor:'#111318',bodyColor:'#f0f2f5',callbacks:{label:c=>`Sent. +: ${c.parsed.y}%`}}},scales:{x:{grid:{color:'rgba(255,255,255,0.03)'},ticks:{color:'#484d5c',font:{size:9}}},y:{grid:{color:'rgba(255,255,255,0.03)'},ticks:{color:'#484d5c',font:{size:9},callback:v=>v+'%'}}}}});
+  ch.ecc=new Chart(document.getElementById('ecc'),{type:'bar',data:{labels:bnames,datasets:[{data:bench.map((_,i)=>[parseFloat(DB[cur].kpis[2]?.v)||2,2.4,1.8,3.4][i]||2),backgroundColor:bcolors}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{backgroundColor:'#111318',bodyColor:'#f0f2f5',callbacks:{label:c=>`Eng: ${c.parsed.y}%`}}},scales:{x:{grid:{color:'rgba(255,255,255,0.03)'},ticks:{color:'#484d5c',font:{size:9}}},y:{grid:{color:'rgba(255,255,255,0.03)'},ticks:{color:'#484d5c',font:{size:9},callback:v=>v+'%'}}}}});
+  ch.wcc=new Chart(document.getElementById('wcc'),{type:'line',data:{labels:['Ene','Mar','May','Jul','Sep','Nov'],datasets:bench.slice(0,2).map((b,i)=>({label:b.nm,data:i===0?[22,26,28,30,32,34]:[18,20,18,20,22,24],borderColor:i===0?resolveColor(b.c,0.8):'rgba(64,128,240,0.6)',backgroundColor:'transparent',tension:0.4,pointRadius:2,borderDash:i===1?[4,3]:[]}))},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,labels:{color:'#8c91a0',font:{size:9},boxWidth:8}},tooltip:{backgroundColor:'#111318',bodyColor:'#f0f2f5'}},scales:{x:{grid:{color:'rgba(255,255,255,0.03)'},ticks:{color:'#484d5c',font:{size:9}}},y:{grid:{color:'rgba(255,255,255,0.03)'},ticks:{color:'#484d5c',font:{size:9},callback:v=>v+'K'}}}}});
+}
+
+function resolveColor(c,alpha){
+  const m={
+    'var(--gold)':`rgba(200,164,90,${alpha})`,'var(--acid)':`rgba(0,224,154,${alpha})`,'var(--amb)':`rgba(240,164,32,${alpha})`,'var(--red)':`rgba(240,64,64,${alpha})`,'var(--blue)':`rgba(64,128,240,${alpha})`,'var(--pur)':`rgba(144,96,240,${alpha})`,'var(--wine)':`rgba(155,32,66,${alpha})`,'var(--t2)':`rgba(140,145,160,${alpha})`,'var(--t3)':`rgba(72,77,92,${alpha})`,
+  };return m[c]||c.replace(')',`,${alpha})`).replace('rgb','rgba')||`rgba(140,145,160,${alpha})`;
+}
+
+function renderCompDetail(comps){
+  const rc={h:'var(--red)',m:'var(--amb)',l:'var(--acid)'};const rl={h:'Alto',m:'Medio',l:'Bajo'};
+  const custom=customBenchCompetitors[cur]||[];
+  const all=[...comps,...custom];
+  if(!all.length){document.getElementById('comp-detail').innerHTML='<div class="empty2">Sin competidores definidos</div>';return;}
+  document.getElementById('comp-detail').innerHTML=all.map(c=>`
+    <div class="comp-card" style="border-left-color:${rc[c.risk||'m']}">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+        <div style="font-size:12px;font-weight:600">${c.nm}</div>
+        <span style="font-size:9px;font-family:'JetBrains Mono',monospace;color:${rc[c.risk||'m']}">Riesgo ${rl[c.risk||'m']}</span>
+      </div>
+      <div style="font-size:10px;color:var(--t3);font-family:'JetBrains Mono',monospace;margin-bottom:5px">${c.cat}${c.pr?' · Precio '+c.pr:''}</div>
+      <div style="font-size:11px;color:var(--t2);line-height:1.5;margin-bottom:5px">${c.est||c.notes||''}</div>
+      ${c.ig?`<a href="https://instagram.com/${c.ig.replace('@','')}" target="_blank" style="font-size:9px;color:var(--blue);font-family:'JetBrains Mono',monospace">↗ ${c.ig} en Instagram</a>`:''}
+      ${c.sov?`<div style="margin-top:5px;font-size:9px;font-family:'JetBrains Mono',monospace;color:var(--t3)">SOV est.: <span style="color:var(--t1)">${c.sov}%</span></div>`:''}
+    </div>`).join('');
+}
+
+function renderSL(sl){
+  if(!sl.kpis){document.getElementById('sl-kpis').innerHTML='';return;}
+  const tc={g:'var(--acid)',r:'var(--red)',a:'var(--amb)',n:'var(--t2)'};
+  document.getElementById('sl-kpis').innerHTML=(sl.kpis||[]).map(k=>`<div class="kpi ${k.t}"><div class="kl">${k.l}</div><div class="kv">${k.v}</div><div class="kd dw">→ ${k.d}</div></div>`).join('');
+
+  const sc2={p:'var(--acid)',r:'var(--red)',n:'var(--amb)'};const sw2={p:'var(--ad)',r:'var(--rd)',n:'var(--amd)'};const sl2={p:'positivo',r:'negativo',n:'neutral'};
+  const sorted=[...(sl.convos||[])].sort((a,b)=>new Date(b.dt)-new Date(a.dt));
+  document.getElementById('sl-convos').innerHTML=sorted.map(c=>`
+    <div class="conv">
+      <div class="conv-ico" style="background:${c.bg}">${c.ico}</div>
+      <div class="conv-b">
+        <div class="conv-txt">${c.txt}</div>
+        <div class="conv-meta">
+          <span style="font-weight:500">${c.plat}</span>
+          <span class="conv-date">${c.dt}</span>
+          <span class="conv-sp" style="background:${sw2[c.s]};color:${sc2[c.s]}">${sl2[c.s]}</span>
+          <span>♥ ${c.likes}</span>
+          ${c.url&&c.url!=='#'?`<a href="${c.url}" target="_blank" class="conv-link">↗ Ver fuente</a>`:''}
+        </div>
+      </div>
+    </div>`).join('');
+
+  document.getElementById('sl-topics').innerHTML=(sl.topics||[]).map(t=>`
+    <div class="topic-pill2" style="background:${t.t==='g'?'var(--ad)':t.t==='r'?'var(--rd)':'var(--s3)'}">
+      <div><div style="font-size:11px;font-weight:500">${t.nm}</div><div style="font-size:10px;color:var(--t3);font-family:'JetBrains Mono',monospace">${t.vol}</div></div>
+      <div style="font-size:10px;font-family:'JetBrains Mono',monospace;color:${t.t==='g'?'var(--acid)':t.t==='r'?'var(--red)':'var(--amb)'}">${t.chg}</div>
+    </div>`).join('');
+
+  document.getElementById('sl-stats').innerHTML=(sl.stats||[]).map(s=>`<div class="sl-stat"><span class="sl-stn">${s.nm}</span><span class="sl-stv" style="color:${tc[s.t]||tc.n}">${s.v}</span></div>`).join('');
+
+  const cv=document.getElementById('slChart');if(ch.sl)ch.sl.destroy();
+  const ctx=cv.getContext('2d');const g=ctx.createLinearGradient(0,0,0,150);g.addColorStop(0,'rgba(144,96,240,0.18)');g.addColorStop(1,'rgba(144,96,240,0)');
+  const baseVol=parseInt((sl.kpis[0]?.v||'300').replace(/[^0-9]/g,''));
+  ch.sl=new Chart(cv,{type:'line',data:{labels:['Jul','Ago','Sep','Oct','Nov','Dic','Ene','Feb','Mar'],datasets:[{label:'Total',data:[0.55,0.65,0.7,0.6,0.75,0.85,0.88,0.82,1].map(v=>Math.round(v*baseVol)),borderColor:'rgba(144,96,240,0.9)',backgroundColor:g,fill:true,tension:0.4,pointRadius:2},{label:'Negativas',data:[0.08,0.1,0.09,0.12,0.1,0.12,0.14,0.11,0.15].map(v=>Math.round(v*baseVol)),borderColor:'rgba(240,64,64,0.7)',backgroundColor:'transparent',fill:false,tension:0.4,pointRadius:2,borderDash:[4,3]}]},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{display:true,labels:{color:'#8c91a0',font:{size:9},boxWidth:8,padding:5}},tooltip:{backgroundColor:'#111318',bodyColor:'#f0f2f5'}},scales:{x:{grid:{color:'rgba(255,255,255,0.03)'},ticks:{color:'#484d5c',font:{size:9}}},y:{grid:{color:'rgba(255,255,255,0.03)'},ticks:{color:'#484d5c',font:{size:9}}}}}});
+  document.getElementById('sl-alerts').innerHTML=(sl.alerts||[]).map(a=>`<div class="ins ${a.t}"><div class="idot" style="background:${a.t==='r'?'var(--red)':'var(--amb)'}"></div><div class="itxt">${a.txt}</div></div>`).join('');
+}
+
+function renderAIS(ai){
+  if(!ai.engines){document.getElementById('ai-engines').innerHTML='';return;}
+  const sc={p:'var(--acid)',n:'var(--red)',w:'var(--amb)'};
+  document.getElementById('ai-engines').innerHTML=ai.engines.map(e=>`
+    <div class="ae-card" style="background:${e.bg};border-color:${e.c}22">
+      <div style="position:absolute;top:7px;right:7px;font-size:9px;padding:2px 5px;border-radius:2px;background:${e.bg};color:${e.c};font-family:'JetBrains Mono',monospace;border:1px solid ${e.c}44">${e.score>=60?'✓ Presente':e.score>=30?'~ Ocasional':'✗ Baja'}</div>
+      <div class="ae-logo">${e.logo}</div>
+      <div class="ae-nm" style="color:${e.c}">${e.nm}</div>
+      <div class="ae-score" style="color:${e.score>=60?'var(--acid)':e.score>=30?'var(--amb)':'var(--red)'}">${e.score}</div>
+      <div class="ae-lbl">${e.lbl}</div>
+      <div class="ae-bar"><div class="ae-bar-fill" style="width:${e.score}%;background:${e.score>=60?'var(--acid)':e.score>=30?'var(--amb)':'var(--red)'}"></div></div>
+      <a href="https://${e.src}" target="_blank" style="font-size:9px;color:var(--t3);font-family:'JetBrains Mono',monospace;margin-top:4px;display:block">↗ ${e.src}</a>
+    </div>`).join('');
+
+  document.getElementById('ai-responses').innerHTML=(ai.responses||[]).map(r=>`
+    <div class="ai-query-item">
+      <div class="aqi-platform" style="background:var(--bd);color:var(--blue)">${r.logo}</div>
+      <div class="aqi-q">
+        <div class="aqi-qtext">"${r.q}"</div>
+        <div class="aqi-response">${r.resp}</div>
+        <div class="aqi-meta">
+          <span>${r.platform}</span>
+          <a href="https://${r.src}" target="_blank" style="color:var(--blue);font-family:'JetBrains Mono',monospace;font-size:9px">↗ ${r.src}</a>
+          <span>${r.vol}</span>
+        </div>
+      </div>
+    </div>`).join('');
+
+  document.getElementById('ai-queries').innerHTML=(ai.queries||[]).map((q,i)=>`
+    <div class="tri"><span class="trn2">${String(i+1).padStart(2,'0')}</span>
+    <div style="flex:1"><div class="trq">${q.q}</div><div class="trsrc">Fuente: ${q.plat}</div></div>
+    <div class="trb"><div class="trbf" style="width:${q.v}%;background:var(--pur)"></div></div>
+    <span style="font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--pur)">${q.v}</span></div>`).join('');
+
+  document.getElementById('social-ai').innerHTML=(ai.social||[]).map(s=>`
+    <div class="social-ai-item">
+      <div class="sai-platform">${s.plat}</div>
+      <div style="flex:1"><div class="sai-q">${s.q}</div><div style="font-size:9px;color:var(--t3);font-family:'JetBrains Mono',monospace">Fuente: ${s.src}</div></div>
+      <div style="text-align:right">
+        <div class="sai-vol">${s.vol}</div>
+        <div class="sai-trend" style="color:${s.trend.startsWith('+')?'var(--acid)':'var(--red)'}">${s.trend}</div>
+      </div>
+    </div>`).join('');
+
+  document.getElementById('ai-overviews').innerHTML=(ai.overviews||[]).map(o=>`
+    <div class="ins ${o.t}"><div class="idot" style="background:${o.t==='g'?'var(--acid)':o.t==='r'?'var(--red)':'var(--amb)'}"></div>
+    <div><div class="itxt" style="font-style:italic;margin-bottom:3px">"${o.query}"</div><div class="itxt">${o.txt}</div></div></div>`).join('');
+
+  // AI trend chart
+  const cv=document.getElementById('aiTrendChart');if(ch.ait)ch.ait.destroy();
+  const ctx=cv.getContext('2d');
+  ch.ait=new Chart(cv,{type:'line',data:{labels:['2022','Q1 23','Q2 23','Q3 23','Q4 23','Q1 24','Q2 24','Q3 24','Q4 24','Q1 25'],datasets:[
+    {label:'Google Search',data:[100,98,95,90,86,80,74,68,62,58],borderColor:'rgba(64,128,240,0.8)',backgroundColor:'transparent',tension:0.4,pointRadius:2},
+    {label:'AI Search (ChatGPT/Perpl)',data:[2,4,8,14,22,32,44,56,68,78],borderColor:'rgba(0,224,154,0.9)',backgroundColor:'transparent',tension:0.4,pointRadius:2},
+  ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,labels:{color:'#8c91a0',font:{size:9},boxWidth:8,padding:5}},tooltip:{backgroundColor:'#111318',bodyColor:'#f0f2f5'}},scales:{x:{grid:{color:'rgba(255,255,255,0.03)'},ticks:{color:'#484d5c',font:{size:9}}},y:{grid:{color:'rgba(255,255,255,0.03)'},ticks:{color:'#484d5c',font:{size:9},callback:v=>v+'%'}}}}});
+
+  // AI tools
+  document.getElementById('ai-tools').innerHTML=AI_TOOLS.map(t=>`
+    <div style="padding:10px 12px;background:var(--s3);border-radius:var(--rs);border-left:2px solid ${t.score>=88?'var(--acid)':t.score>=80?'var(--blue)':'var(--amb)'}">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+        <div style="font-size:12px;font-weight:600">${t.nm}</div>
+        <div style="display:flex;align-items:center;gap:5px">
+          ${t.free?'<span style="font-size:8px;padding:1px 5px;border-radius:2px;background:var(--ad);color:var(--acid);font-family:JetBrains Mono,monospace">FREE</span>':''}
+          <span style="font-size:11px;font-family:JetBrains Mono,monospace;color:var(--acid)">${t.score}</span>
+        </div>
+      </div>
+      <div style="font-size:9px;color:var(--t3);font-family:JetBrains Mono,monospace;margin-bottom:5px">${t.cat}</div>
+      <div style="font-size:11px;color:var(--t2);line-height:1.5;margin-bottom:6px">${t.use}</div>
+      <a href="https://${t.link}" target="_blank" style="font-size:9px;color:var(--blue);font-family:JetBrains Mono,monospace">↗ ${t.link}</a>
+    </div>`).join('');
+}
+
+
+// ===== AI ANALYSIS =====
+function runAI(){
+  const d=DB[cur];const out=document.getElementById('ai-out');
+  out.innerHTML=`<div style="display:flex;align-items:center;gap:10px;padding:22px;color:var(--t3);font-size:11px;font-family:'JetBrains Mono',monospace"><div class="spin"></div>Analizando ${d.name} — generando inteligencia estratégica...</div>`;
+  showTab('ai',null);document.querySelectorAll('.tab').forEach((t,i)=>{t.classList.remove('on');if(i===5)t.classList.add('on');});
+  setTimeout(()=>{
+    const scores={arrow:72,pb:62,vh:28,dc:18,vgs:81};const sc=scores[cur]||60;
+    const scc=sc>=70?'var(--acid)':sc>=40?'var(--amb)':'var(--red)';
+    out.innerHTML=`
+      <div class="oscore">
+        <div class="oscv" style="color:${scc}">${sc}</div>
+        <div class="osci"><div class="oscl">Brand Opportunity Score · ${d.name}</div><div class="oscs">Basado en datos verificados y estimados · ${new Date().toLocaleDateString('es-CL')}</div>
+          <div class="scbar"><div class="scfill" style="width:${sc}%;background:${scc}"></div></div>
+        </div>
+      </div>
+      <div class="ai-box2" style="margin-top:12px">
+        <div class="seclbl" style="margin-bottom:8px">Análisis estratégico · ${d.name.toUpperCase()}</div>
+        <div class="airsp">${getAnalysis(cur,d)}</div>
+      </div>
+      <div style="margin-top:12px"><div class="seclbl" style="margin-bottom:7px">Acciones prioritarias</div>
+        ${d.ins.map(i=>`<div class="ins ${i.t}"><div class="idot" style="background:${i.t==='g'?'var(--acid)':i.t==='a'?'var(--amb)':i.t==='r'?'var(--red)':'var(--blue)'}"></div><div class="itxt">${i.txt}</div></div>`).join('')}
+      </div>
+      <div class="g3" style="margin-top:12px">${getActions(cur)}</div>`;
+  },1800);
+}
+
+const ANALYSES={
+  arrow:`<strong>Arrow Chile</strong> tiene dos activos digitales verificados: <span class="hi">22K en Instagram (@arrowchile)</span> y <span class="hi">141K en Facebook</span>. El gap entre ambos — una base masiva en FB que no migró a IG — es la primera palanca.<br><br>El benchmark real muestra que <span class="wa">Doritex y Potros tienen mayor actividad digital relativa.</span> La diferenciación de Arrow tiene que codificarse en contenido, no solo en recall. TikTok sin actividad es la oportunidad más obvia: ninguno de los competidores directos tiene presencia sólida.<br><br>En AI search, Arrow <span class="hi">ya aparece en Perplexity</span> cuando se pregunta por camisas formales. Esto es un activo a amplificar con contenido que refuerce esas menciones positivas.`,
+  pb:`<strong>Piero Butti Store</strong> (pierobuttistore.cl) opera moda masculina con presencia activa en Falabella. El punto de partida de <span class="wa">~1.2K en @piero_butti</span> no es el destino — IB Store tiene 153K. La brecha es cerrrable con contenido consistente y narrativa italiana diferenciada.<br><br>El territorio <span class="hi">"moda masculina italiana en Chile"</span> está disponible. Americanino es colombiana, GEF es colombiana, IB Store no tiene origen de marca. Piero Butti tiene una narrativa única que nadie puede replicar. Hay que activarla.<br><br>TikTok es urgente. El contenido de moda masculina formal chilena en TikTok tiene demanda y ninguna marca local lo domina todavía.`,
+  vh:`<strong>Van Heusen Chile</strong> tiene el problema más urgente de la cartera: <span class="da">158 seguidores en Instagram</span> en 2025 es prácticamente inexistencia digital. La marca que no aparece en IG/TikTok no existe para el 50% de su target actual.<br><br>La paradoja: Van Heusen <span class="wa">tiene reconocimiento histórico.</span> La gente la conoce. Pero no la ve. El plan más eficiente es activar la presencia digital aprovechando ese reconocimiento latente antes de que la brecha sea irreversible.<br><br><span class="da">Perplexity ya recomienda competidores sobre VH</span> cuando se buscan alternativas. Esto es SEO AI negativo en tiempo real. El tiempo de actuar fue ayer — hoy es lo siguiente mejor.`,
+  dc:`<strong>Discount Corner</strong> necesita un plan de crisis, no un plan de marketing. <span class="da">34% de menciones negativas + 0% de respuesta</span> es la combinación que destruye marcas en 90 días.<br><br>La demanda del segmento off-price es real y creciente en Chile. Ripley Outlet y Paris Sale lo capturan con éxito porque tienen la reputación como activo. <span class="wa">DC tiene el precio pero no la confianza.</span><br><br>Primer paso: responder absolutamente todo en 24 horas durante 30 días. Solo eso puede cambiar la curva de sentimiento. Segundo paso: rebranding suave hacia "smart fashion" que dignifique la promesa de valor.`,
+  vgs:`<strong>Viña Garcés Silva</strong> es la marca más saludable de la cartera. <span class="hi">15K en IG, 78% sentimiento positivo, presencia en Wine Spectator</span> y menciones consistentes en ChatGPT y Perplexity para queries de vino premium chileno.<br><br>El territorio <span class="hi">"vinos con vista al mar · Valle Leyda"</span> es exclusivo e irreplicable. Hay que radicalizarlo. Cada pieza de contenido debería tener esa narrativa como núcleo, no como accesorio.<br><br>La oportunidad más inmediata: <span class="wa">TikTok de enoturismo.</span> Viñas similares en Napa, Toscana y Borgoña tienen millones de views. Garcés Silva tiene el visual más potente de Chile para ese formato y está llegando en el momento correcto.`,
+};
+
+const ACTIONS={
+  arrow:[{ico:'🎵',t:'g',h:'Activar TikTok Arrow',b:'Ningún competidor directo tiene presencia. 2 posts/semana de "workwear masculino" puede establecer liderazgo en 90 días.',u:'Prioridad 1 · Esta semana'},{ico:'📘',t:'b',h:'Reactivar FB 141K',b:'Retargeting y contenido nativo para la audiencia existente. El costo de adquisición es mínimo.',u:'Prioridad 2 · Este mes'},{ico:'🤖',t:'g',h:'Contenido para AI Search',b:'Artículos "las mejores camisas formales Chile" optimizados para Perplexity y ChatGPT. La ventana es ahora.',u:'Prioridad 3 · Este mes'}],
+  pb:[{ico:'🎵',t:'g',h:'TikTok Piero Butti',b:'Contenido "moda masculina italiana" diferenciado. IB Store no tiene esa narrativa. Entrar con identidad clara.',u:'Prioridad 1 · Esta semana'},{ico:'📷',t:'g',h:'Crecer @piero_butti',b:'1 post editorial diario. Lifestyle + ropa. Sin hablar de producto — hablar de estilo de vida.',u:'Prioridad 2 · Este mes'},{ico:'🛒',t:'a',h:'SEO pierobuttistore.cl',b:'Cada venta propia vs Falabella tiene 4x más margen. Invertir en tráfico orgánico propio.',u:'Prioridad 3 · Q1'}],
+  vh:[{ico:'🚨',t:'r',h:'Instagram Chile urgente',b:'158 seguidores. Plan 90 días: 1 post/día + stories + reels. Target: 3K en 90 días.',u:'URGENTE · Hoy'},{ico:'💬',t:'r',h:'CM activo en 24h',b:'Responder el 100% de menciones en 24h. Sin respuesta = deterioro exponencial.',u:'URGENTE · Hoy'},{ico:'💡',t:'a',h:'Campaña Heritage + Digital',b:'"Van Heusen lleva décadas vistiendo al hombre chileno." Conectar historia con 2025.',u:'Prioridad 1 · Este mes'}],
+  dc:[{ico:'🆘',t:'r',h:'Plan crisis 30 días',b:'Responder todo. Mejorar calidad percibida. Protocolo de reposición. Sin esto nada más funciona.',u:'URGENTE · Hoy'},{ico:'🔄',t:'a',h:'Rebranding Smart Fashion',b:'"Las mejores marcas al precio correcto." Dignificar la promesa de valor sin cambiar el precio.',u:'Prioridad 1 · Q1'},{ico:'🎯',t:'b',h:'UX web urgente',b:'Conv. 0.3% es crítico. Propuesta de valor clara en los primeros 3 segundos.',u:'Prioridad 2 · Este mes'}],
+  vgs:[{ico:'🎵',t:'g',h:'TikTok Enoturismo',b:'"Visita Garcés Silva" formato corto. Vista al mar + cata + cosecha. El visual más potente de Chile.',u:'Prioridad 1 · Esta semana'},{ico:'📍',t:'g',h:'SEO Valle Leyda',b:'"Vinos con vista al mar Chile" — demanda creciente, baja competencia en AI search.',u:'Prioridad 2 · Este mes'},{ico:'🥂',t:'a',h:'Distribución Santiago',b:'Amayna difícil de encontrar en distribuidores locales. Friction más reportada — solucionar.',u:'Prioridad 3 · Inmediato'}],
+};
+
+function getAnalysis(k,d){return ANALYSES[k]||ANALYSES.arrow;}
+function getActions(k){
+  const acts=ACTIONS[k]||ACTIONS.arrow;
+  return acts.map(a=>`<div class="card" style="border-left:2px solid ${a.t==='g'?'var(--acid)':a.t==='a'?'var(--amb)':a.t==='r'?'var(--red)':'var(--blue)'}"><div class="cb"><div style="font-size:18px;margin-bottom:7px">${a.ico}</div><div style="font-size:12px;font-weight:600;margin-bottom:5px">${a.h}</div><div style="font-size:11px;color:var(--t2);line-height:1.6;margin-bottom:7px">${a.b}</div><div style="font-size:9px;font-family:'JetBrains Mono',monospace;color:${a.t==='g'?'var(--acid)':a.t==='a'?'var(--amb)':a.t==='r'?'var(--red)':'var(--blue)'}">${a.u}</div></div></div>`).join('');
+}
+
+// ===== NAVIGATION =====
+function showTab(id,el){
+  document.querySelectorAll('.tp').forEach(p=>p.classList.remove('on'));
+  document.getElementById('tab-'+id)?.classList.add('on');
+  if(el){document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));el.classList.add('on');}
+  // refresh ads when switching to ads tab
+  if(id==='ads'){applyAdsFilter();}
+}
+function sr(btn){document.querySelectorAll('.rb').forEach(b=>b.classList.remove('on'));btn.classList.add('on');}
+function sw(key){
+  cur=key;
+  document.querySelectorAll('.bi').forEach(b=>{b.classList.remove('active');if(b.id==='bi-'+key)b.classList.add('active');});
+  render();
+  applyAdsFilter();
+  saveState();
+}
+
+// ===== MODAL =====
+function openModal(mode){
+  modalMode=mode;
+  const t=document.getElementById('modal-title');const b=document.getElementById('modal-body');
+  if(mode==='brand'){
+    t.textContent='Agregar nueva marca';
+    b.innerHTML=`<div class="fg"><label class="fl">Nombre</label><input class="fi2" id="mb-nm" placeholder="Ej: H&M Hombre"></div><div class="fr2"><div class="fg" style="flex:1"><label class="fl">Categoría</label><input class="fi2" id="mb-ct" placeholder="Moda, vino..."></div><div class="fg" style="flex:1"><label class="fl">Web</label><input class="fi2" id="mb-url" placeholder="marca.cl"></div></div>`;
+  } else {
+    t.textContent='Agregar competidor al benchmark';
+    b.innerHTML=`<div class="fg"><label class="fl">Nombre</label><input class="fi2" id="bc-nm" placeholder="Ej: Inova"></div><div class="fr2"><div class="fg" style="flex:1"><label class="fl">Categoría</label><input class="fi2" id="bc-ct" placeholder="Moda, vino..."></div><div class="fg" style="flex:1"><label class="fl">Precio aprox.</label><input class="fi2" id="bc-pr" placeholder="$$ · $$$ etc."></div></div><div class="fg"><label class="fl">Notas / posicionamiento</label><input class="fi2" id="bc-notes" placeholder="Por qué es competidor..."></div><div class="fr2"><div class="fg" style="flex:1"><label class="fl">Instagram handle</label><input class="fi2" id="bc-ig" placeholder="@handle"></div><div class="fg" style="flex:1"><label class="fl">SOV estimado %</label><input class="fi2" id="bc-sov" placeholder="15" type="number"></div></div>`;
+  }
+  document.getElementById('modal').classList.add('open');
+}
+function closeModal(){document.getElementById('modal').classList.remove('open');}
+function modalConfirm(){
+  if(modalMode==='brand'){addBrand();}else{addBenchComp();}
+}
+function addBrand(){
+  const nm=document.getElementById('mb-nm')?.value.trim();const ct=document.getElementById('mb-ct')?.value.trim();const url=document.getElementById('mb-url')?.value.trim();
+  if(!nm)return;const key=nm.toLowerCase().replace(/\s+/g,'').replace(/[^a-z0-9]/g,'');
+  const ini=nm.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+  const cs=['var(--blue)','var(--acid)','var(--amb)','var(--pur)'];const c=cs[Object.keys(DB).length%cs.length];
+  DB[key]={name:nm,url:url||nm.toLowerCase()+'.cl',cat:ct||'Sin categoría',health:'Nueva',hcls:'a',kpis:Array(6).fill(null).map((_,i)=>({l:['Instagram','Facebook','Engagement','Alcance','Visitas web','Métrica 6'][i],v:'—',d:'conectar API',dt:'w',t:'n',note:'Agregar datos manualmente'})),sent:[50,30,20],tags:['nueva marca','en análisis'],channels:[{ico:'📊',nm:'Conectar canales',hd:'Agregar handles manualmente',col:'var(--gold)',fol:'—',d:'—',dt:'w',eng:'—',src:null,src_v:false}],traffic:{stats:[{nm:'Conectar Analytics',v:'—',t:'n',src:'Pendiente'}],src:[{l:'Pendiente',p:100,c:'var(--s4)'}]},aitrends:[{q:nm+' búsquedas AI',v:40}],articles:[{ttl:'Agregar primeras menciones de '+nm,src:'Manual TLG',url:'#',dt:new Date().toISOString().slice(0,10),s:'n'}],bench:[{nm:ini,sc:0,c:c,bg:'rgba(100,100,100,0.1)',you:true}],benchLabel:'Categoría '+ct,competitors:[],ins:[{t:'b',txt:`<strong>${nm} agregada.</strong> Conecta los canales y agrega datos para comenzar el monitoreo.`}],eng:{labels:['Ene','Feb','Mar','Abr','May','Jun'],eng:[0,0,0,0,0,0],reach:[0,0,0,0,0,0]},bkpis:Array(6).fill(null).map(()=>({l:'Métrica',v:'—',d:'pendiente',dt:'w',t:'n'})),ai:{engines:[],responses:[],queries:[],social:[],overviews:[]},sl:{kpis:[{l:'Estado',v:'Nueva',d:'configurar',t:'n'}],convos:[],topics:[],stats:[],alerts:[{txt:`Marca ${nm} nueva · conectar herramientas de escucha social`,t:'a'}]},};
+  BRAND_INDUSTRY[key]=['moda_masculina'];
+  const eb=document.getElementById('extra-sb');const div=document.createElement('div');
+  div.className='bi';div.id='bi-'+key;div.setAttribute('onclick',`sw('${key}')`);
+  div.innerHTML=`<div class="bi-av" style="background:${c}22;color:${c}">${ini}</div><div class="bi-inf"><div class="bi-nm">${nm}</div><div class="bi-ct">${ct||'Sin cat.'}</div></div><div class="bi-dot" style="background:var(--amb)"></div><div class="bi-eye" onclick="toggleHide(event,'${key}')">👁</div>`;
+  eb.appendChild(div);closeModal();['mb-nm','mb-ct','mb-url'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});sw(key);saveState();
+}
+function addBenchComp(){
+  const nm=document.getElementById('bc-nm')?.value.trim();if(!nm)return;
+  const ct=document.getElementById('bc-ct')?.value.trim();const pr=document.getElementById('bc-pr')?.value.trim();
+  const notes=document.getElementById('bc-notes')?.value.trim();const ig=document.getElementById('bc-ig')?.value.trim();
+  const sov=parseInt(document.getElementById('bc-sov')?.value)||10;
+  if(!customBenchCompetitors[cur])customBenchCompetitors[cur]=[];
+  customBenchCompetitors[cur].push({nm,cat:ct||'Competidor',pr:pr||'$$',sov,ig:ig||'',risk:'m',est:notes||'Competidor agregado manualmente',custom:true});
+  closeModal();renderCompDetail(DB[cur].competitors||[]);renderBench(DB[cur].bench);saveState();
+}
+document.getElementById('modal').addEventListener('click',function(e){if(e.target===this)closeModal();});
+document.addEventListener('keydown',e=>{if(e.key==='Enter'&&document.getElementById('ls').style.display!=='none')doLogin();});
+</script>
+</body>
+</html>
